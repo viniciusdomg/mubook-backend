@@ -1,7 +1,6 @@
 package br.com.mubook.mubook.entity;
 
 import br.com.mubook.mubook.enums.TipoUsuario;
-import br.com.mubook.mubook.model.Pessoa;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
