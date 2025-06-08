@@ -16,8 +16,8 @@ import java.time.LocalDate;
 public class PessoaEntity   {
 
     @Id
-    @GeneratedValue(generator = "gen_quadro_entrega_id", strategy = GenerationType.SEQUENCE)
-    @SequenceGenerator(name = "gen_quadro_entrega_id", schema = "polare", sequenceName = "seq_quadro_entrega_id",
+    @GeneratedValue(generator = "gen_pessoa_id", strategy = GenerationType.SEQUENCE)
+    @SequenceGenerator(name = "gen_pessoa_id", schema = "polare", sequenceName = "seq_pessoa_id",
             allocationSize = 1)
     private Long id;
 
@@ -25,6 +25,7 @@ public class PessoaEntity   {
     @Column(nullable = false)
     private String nome;
 
+    @NotNull(message = "CPF necessário")
     @Column
     private String cpf;
 

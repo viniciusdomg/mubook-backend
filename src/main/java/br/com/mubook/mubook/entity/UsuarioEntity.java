@@ -13,8 +13,8 @@ import lombok.NoArgsConstructor;
 public class UsuarioEntity {
 
     @Id
-    @GeneratedValue(generator = "gen_quadro_entrega_id", strategy = GenerationType.SEQUENCE)
-    @SequenceGenerator(name = "gen_quadro_entrega_id", schema = "polare", sequenceName = "seq_quadro_entrega_id",
+    @GeneratedValue(generator = "gen_usuario_id", strategy = GenerationType.SEQUENCE)
+    @SequenceGenerator(name = "gen_usuario_id", schema = "polare", sequenceName = "seq_usuario_id",
             allocationSize = 1)
     private Long id;
 
