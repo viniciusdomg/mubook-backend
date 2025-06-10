@@ -1,4 +1,6 @@
 package br.com.mubook.mubook.repository;
 
-public interface PessoaRepository {
+import br.com.mubook.mubook.model.Pessoa;
+
+public interface PessoaRepository extends GenericRepository<Pessoa, Long> {
 }

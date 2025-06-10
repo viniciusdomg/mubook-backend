@@ -21,6 +21,10 @@ public class PessoaEntity   {
             allocationSize = 1)
     private Long id;
 
+    @NotNull
+    @Column
+    private boolean ativo;
+
     @NotNull(message = "nome necessário")
     @Column(nullable = false)
     private String nome;

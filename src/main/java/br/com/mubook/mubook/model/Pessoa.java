@@ -13,6 +13,8 @@ public class Pessoa {
 
     private Long id;
 
+    private boolean ativo;
+    
     private String nome;
 
     private String cpf;
@@ -24,4 +26,7 @@ public class Pessoa {
     private LocalDate dataNascimento;
 
     private String genero;
+
+    private Endereco endereco;
+
 }

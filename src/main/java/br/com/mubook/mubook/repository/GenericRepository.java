@@ -1,8 +1,12 @@
 package br.com.mubook.mubook.repository;
 
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.NoRepositoryBean;
+
 import java.util.List;
 
-public interface GenericRepository<M, K> {
+@NoRepositoryBean
+public interface GenericRepository<M, K>{
 
     M save(M model);
 

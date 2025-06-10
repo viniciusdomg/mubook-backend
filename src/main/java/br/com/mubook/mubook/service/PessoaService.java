@@ -1,4 +1,6 @@
 package br.com.mubook.mubook.service;
 
-public interface PessoaService {
+import br.com.mubook.mubook.model.Pessoa;
+
+public interface PessoaService extends GenericService<Pessoa, Long>{
 }
