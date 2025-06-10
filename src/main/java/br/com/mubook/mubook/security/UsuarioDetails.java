@@ -1,6 +1,6 @@
 package br.com.mubook.mubook.security;
 
-import br.com.mubook.mubook.enums.TipoUsuario;
+import br.com.mubook.mubook.enums.RoleUser;
 import br.com.mubook.mubook.model.Usuario;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -18,7 +18,7 @@ public class UsuarioDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return TipoUsuario.getTiposUsuarios().stream()
+        return RoleUser.getTiposUsuarios().stream()
                 .map(role -> new SimpleGrantedAuthority(role.getNome()))
                 .collect(Collectors.toList());
     }

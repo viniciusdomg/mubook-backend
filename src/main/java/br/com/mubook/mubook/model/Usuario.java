@@ -1,6 +1,6 @@
 package br.com.mubook.mubook.model;
 
-import br.com.mubook.mubook.enums.TipoUsuario;
+import br.com.mubook.mubook.enums.RoleUser;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,7 +16,7 @@ public class Usuario {
 
     private String senha;
 
-    private TipoUsuario tipoUsuario;
+    private RoleUser roleUser;
 
     private Pessoa pessoa;
 

@@ -1,10 +1,7 @@
 package br.com.mubook.mubook.security;
 
-import br.com.mubook.mubook.exception.AuthenticationInvalidException;
 import br.com.mubook.mubook.exception.UsuarioNotFoundException;
-import br.com.mubook.mubook.model.Usuario;
 import br.com.mubook.mubook.service.UsuarioService;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;

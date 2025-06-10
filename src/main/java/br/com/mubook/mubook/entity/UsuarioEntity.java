@@ -1,6 +1,6 @@
 package br.com.mubook.mubook.entity;
 
-import br.com.mubook.mubook.enums.TipoUsuario;
+import br.com.mubook.mubook.enums.RoleUser;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -27,7 +27,7 @@ public class UsuarioEntity {
     private String senha;
 
     @Enumerated(EnumType.STRING)
-    private TipoUsuario tipoUsuario;
+    private RoleUser roleUser;
 
     @OneToOne
     @JoinColumn(name = "id_pessoa", referencedColumnName = "id", nullable = false)
