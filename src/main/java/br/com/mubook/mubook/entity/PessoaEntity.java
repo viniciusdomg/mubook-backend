@@ -13,12 +13,12 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "pessoas")
+@Table(schema = "mubook", name = "pessoa")
 public class PessoaEntity   {
 
     @Id
     @GeneratedValue(generator = "gen_pessoa_id", strategy = GenerationType.SEQUENCE)
-    @SequenceGenerator(name = "gen_pessoa_id", schema = "polare", sequenceName = "seq_pessoa_id",
+    @SequenceGenerator(name = "gen_pessoa_id", schema = "mubook", sequenceName = "seq_pessoa_id",
             allocationSize = 1)
     private Long id;
 

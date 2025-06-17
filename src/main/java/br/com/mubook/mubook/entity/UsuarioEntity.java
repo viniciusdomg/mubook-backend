@@ -11,12 +11,12 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "usuarios")
+@Table(schema = "mubook", name = "usuario")
 public class UsuarioEntity {
 
     @Id
     @GeneratedValue(generator = "gen_usuario_id", strategy = GenerationType.SEQUENCE)
-    @SequenceGenerator(name = "gen_usuario_id", schema = "polare", sequenceName = "seq_usuario_id",
+    @SequenceGenerator(name = "gen_usuario_id", schema = "mubook", sequenceName = "seq_usuario_id",
             allocationSize = 1)
     private Long id;
 
@@ -28,9 +28,10 @@ public class UsuarioEntity {
     private String senha;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "role_user", nullable = false)
     private RoleUser roleUser;
 
-    @OneToOne
-    @JoinColumn(name = "id_pessoa", referencedColumnName = "id", nullable = false)
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "pessoa_id", referencedColumnName = "id", nullable = false)
     private PessoaEntity pessoa;
 }

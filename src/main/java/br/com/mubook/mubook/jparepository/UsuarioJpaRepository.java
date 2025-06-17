@@ -9,7 +9,12 @@ import java.util.Optional;
 @Repository
 public interface UsuarioJpaRepository extends GenericRepository<UsuarioEntity, Long> {
 
-    @Query("from UsuarioEntity u where u.pessoa.email = :search OR u.pessoa.cpf = :search")
+    @Query("select u " +
+            "from UsuarioEntity u where u.pessoa.email = :search OR u.pessoa.cpf = :search")
     Optional<UsuarioEntity> findByEmailOrCpf(String search);
+
+    @Query("select case when count(p) > 0 then true else false end " +
+            "from PessoaEntity p where p.email = :email OR p.cpf = :cpf")
+    Boolean existsByEmailOrCpf(String email, String cpf);
 
 }

@@ -8,7 +8,7 @@ CREATE SEQUENCE IF NOT EXISTS mubook.seq_usuario_id
     START WITH 1
     NO CYCLE;
 
-CREATE TABLE mubook.pessoa (
+CREATE TABLE IF NOT EXISTS mubook.pessoa (
     id BIGINT PRIMARY KEY DEFAULT nextval('mubook.seq_pessoa_id'),
     ativo BOOLEAN NOT NULL DEFAULT TRUE,
     nome VARCHAR(255) NOT NULL,
@@ -24,11 +24,11 @@ CREATE TABLE mubook.pessoa (
     end_cep VARCHAR(255)
     );
 
-CREATE TABLE mubook.usuario (
+CREATE TABLE IF NOT EXISTS mubook.usuario (
     id BIGINT PRIMARY KEY DEFAULT nextval('mubook.seq_usuario_id'),
     ativo BOOLEAN NOT NULL DEFAULT TRUE,
     senha VARCHAR(255) NOT NULL,
-    tipo_usuario VARCHAR(13) NOT NULL,
+    role_user VARCHAR(13) NOT NULL,
     pessoa_id BIGINT NOT NULL,
     FOREIGN KEY (pessoa_id) REFERENCES mubook.pessoa(id)
 );

@@ -20,6 +20,12 @@ public class Usuario {
 
     private Pessoa pessoa;
 
+    public Usuario(String senha, RoleUser roleUser, Pessoa pessoa) {
+        this.senha = senha;
+        this.roleUser = roleUser;
+        this.pessoa = pessoa;
+    }
+
     public String getUsername() {
         return this.pessoa != null ? this.pessoa.getEmail() : null;
         // Ou você pode implementar lógica para retornar email ou CPF

@@ -4,8 +4,10 @@ import br.com.mubook.mubook.entity.UsuarioEntity;
 import br.com.mubook.mubook.jparepository.UsuarioJpaRepository;
 import br.com.mubook.mubook.mapper.UsuarioEntityMapper;
 import br.com.mubook.mubook.model.Usuario;
+import br.com.mubook.mubook.service.PessoaService;
 import br.com.mubook.mubook.service.UsuarioService;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -17,10 +19,16 @@ public class UsuarioServiceImpl extends GenericServiceImpl<Usuario, Long, Usuari
 
     private final UsuarioEntityMapper mapper;
 
-    public UsuarioServiceImpl(UsuarioJpaRepository repository, UsuarioEntityMapper mapper) {
+    private final PessoaService pessoaService;
+
+    private final PasswordEncoder passwordEncoder;
+
+    public UsuarioServiceImpl(UsuarioJpaRepository repository, UsuarioEntityMapper mapper, PessoaService pessoaService, PasswordEncoder passwordEncoder) {
         super(repository, mapper);
         this.repository = repository;
         this.mapper = mapper;
+        this.pessoaService = pessoaService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -29,5 +37,26 @@ public class UsuarioServiceImpl extends GenericServiceImpl<Usuario, Long, Usuari
             throw new BadCredentialsException("Verifique o email ou o CPF informado");
         }
         return repository.findByEmailOrCpf(search).map(mapper::toModel);
+    }
+
+    @Override
+    public Usuario save(Usuario model) {
+        if(existsByEmailOrCpf(model.getPessoa().getEmail(), model.getPessoa().getCpf())){
+            throw new BadCredentialsException("Email ou CPF já cadastrado");
+        }
+
+        model.setAtivo(true);
+        model.getPessoa().setAtivo(true);
+        var pessoa = pessoaService.save(model.getPessoa());
+
+        model.setPessoa(pessoa);
+        model.setSenha(passwordEncoder.encode(model.getSenha()));
+        UsuarioEntity entity = mapper.fromModel(model);
+        UsuarioEntity savedEntity = repository.save(entity);
+        return mapper.toModel(savedEntity);
+    }
+
+    private Boolean existsByEmailOrCpf(String email, String cpf) {
+        return repository.existsByEmailOrCpf(email, cpf);
     }
 }

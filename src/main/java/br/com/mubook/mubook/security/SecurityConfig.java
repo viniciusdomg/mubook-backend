@@ -20,14 +20,12 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    private final UsuarioDetailsService usuarioDetailsService;
 
     private final AuthenticationProvider authenticationProvider;
 
     private final JwtAuthenticationFilter jwtAuthFilter;
 
-    public SecurityConfig(UsuarioDetailsService usuarioDetailsService, AuthenticationProvider authenticationProvider, JwtAuthenticationFilter jwtAuthFilter) {
-        this.usuarioDetailsService = usuarioDetailsService;
+    public SecurityConfig(AuthenticationProvider authenticationProvider, JwtAuthenticationFilter jwtAuthFilter) {
         this.authenticationProvider = authenticationProvider;
         this.jwtAuthFilter = jwtAuthFilter;
     }

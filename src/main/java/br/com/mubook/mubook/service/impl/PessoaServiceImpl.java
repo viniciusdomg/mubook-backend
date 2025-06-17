@@ -5,7 +5,9 @@ import br.com.mubook.mubook.jparepository.PessoaJpaRepository;
 import br.com.mubook.mubook.mapper.PessoaEntityMapper;
 import br.com.mubook.mubook.model.Pessoa;
 import br.com.mubook.mubook.service.PessoaService;
+import org.springframework.stereotype.Service;
 
+@Service
 public class PessoaServiceImpl extends GenericServiceImpl<Pessoa, Long, PessoaEntity> implements PessoaService {
 
     private final PessoaJpaRepository repository;

@@ -3,7 +3,6 @@ package br.com.mubook.mubook.security;
 import br.com.mubook.mubook.service.UsuarioService;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -16,7 +15,7 @@ public class UsuarioDetailsService implements UserDetailsService {
     }
 
     @Override
-    public UsuarioDetails loadUserByUsername(String search) throws UsernameNotFoundException {
+    public UsuarioDetails loadUserByUsername(String search) throws BadCredentialsException {
         return service.findByEmailOrCpf(search)
                 .map(UsuarioDetails::new)
                 .orElseThrow(() -> new BadCredentialsException("Usuário não encontrado"));
