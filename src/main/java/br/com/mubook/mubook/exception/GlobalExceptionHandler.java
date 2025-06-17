@@ -13,16 +13,4 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body("Ocorreu um erro interno: " + e.getMessage());
     }
-
-    @ExceptionHandler(AuthenticationInvalidException.class)
-    public ResponseEntity<String> handleFailedAuthenticationException(AuthenticationInvalidException a){
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body("Erro na autenticação: " + a.getMessage());
-    }
-
-    @ExceptionHandler(UsuarioNotFoundException.class)
-    public ResponseEntity<String> handleNotFoundUsuarioException(UsuarioNotFoundException u){
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(u.getMessage());
-    }
 }

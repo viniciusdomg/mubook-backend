@@ -81,6 +81,13 @@
 		<dependency>
 			<groupId>org.flywaydb</groupId>
 			<artifactId>flyway-core</artifactId>
+			<version>10.20.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.flywaydb</groupId>
+			<artifactId>flyway-database-postgresql</artifactId>
+			<version>10.20.1</version>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.mapstruct</groupId>
@@ -124,6 +131,19 @@
 							<artifactId>lombok</artifactId>
 						</exclude>
 					</excludes>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.flywaydb</groupId>
+				<artifactId>flyway-maven-plugin</artifactId>
+				<version>9.20.0</version>
+				<configuration>
+					<!--suppress UnresolvedMavenProperty -->
+					<url>${db.url}</url>
+					<!--suppress UnresolvedMavenProperty -->
+					<user>${db.user}</user>
+					<!--suppress UnresolvedMavenProperty -->
+					<password>${db.password}</password>
 				</configuration>
 			</plugin>
 		</plugins>
