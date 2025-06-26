@@ -1,4 +1,4 @@
-package br.com.mubook.mubook.model;
+package br.com.mubook.mubook.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Entity
 @Table(name = "tipo_quadra")
-public class TipoQuadra {
+public class TipoQuadraEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
