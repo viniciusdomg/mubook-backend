@@ -4,5 +4,5 @@ import br.com.mubook.mubook.entity.TipoQuadraEntity;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface TipoQuadraJpaRepository extends GenericRepository<TipoQuadraEntity, Long>{
+public interface TipoQuadraJpaRepository extends GenericRepository<TipoQuadraEntity, Integer>{
 }
