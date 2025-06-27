@@ -9,6 +9,7 @@ import br.com.mubook.mubook.service.UsuarioService;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -31,6 +32,7 @@ public class UsuarioServiceImpl extends GenericServiceImpl<Usuario, Long, Usuari
         this.passwordEncoder = passwordEncoder;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Optional<Usuario> findByEmailOrCpf(String search) {
         if (!search.matches("\\d{11}") && !search.contains("@")) {
