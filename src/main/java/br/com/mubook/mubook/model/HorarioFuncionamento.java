@@ -12,6 +12,7 @@ import java.time.LocalTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class HorarioFuncionamento {
+    private Integer id;
     private DayOfWeek diaSemana;
     private LocalTime horarioAbertura;
     private LocalTime horarioFechamento;
@@ -22,6 +23,6 @@ public class HorarioFuncionamento {
         LocalTime hora = horario.toLocalTime();
         return dia.equals(diaSemana)
                 && (hora.equals(horarioAbertura) || hora.equals(horarioFechamento)
-                || (hora.isAfter(horarioAbertura) && hora.isBefore(horarioFechamento)));
+                        || (hora.isAfter(horarioAbertura) && hora.isBefore(horarioFechamento)));
     }
 }
