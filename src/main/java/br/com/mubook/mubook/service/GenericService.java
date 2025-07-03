@@ -1,5 +1,7 @@
 package br.com.mubook.mubook.service;
 
+import org.hibernate.annotations.SoftDelete;
+
 import java.util.List;
 
 public interface GenericService<M, K> {
@@ -19,4 +21,6 @@ public interface GenericService<M, K> {
     void hardDeleteAll(Iterable<K> id);
 
     void softDeleteById(K id);
+
+    void softDeleteAll(Iterable<K> id);
 }

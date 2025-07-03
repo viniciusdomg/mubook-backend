@@ -1,13 +1,14 @@
 package br.com.mubook.mubook.jparepository;
 
 import br.com.mubook.mubook.entity.UsuarioEntity;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
 @Repository
-public interface UsuarioJpaRepository extends GenericRepository<UsuarioEntity, Long> {
+public interface UsuarioJpaRepository extends GenericRepository<UsuarioEntity, Long>, JpaSpecificationExecutor<UsuarioEntity> {
 
     @Query("select u " +
             "from UsuarioEntity u where u.pessoa.email = :search OR u.pessoa.cpf = :search")

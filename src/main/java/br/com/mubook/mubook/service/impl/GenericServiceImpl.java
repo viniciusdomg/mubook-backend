@@ -35,16 +35,22 @@ public class GenericServiceImpl<M, K, E> implements GenericService<M, K> {
 
     @Override
     public void hardDeleteById(K id) {
-
+        repository.deleteById(id);
     }
 
     @Override
     public void hardDeleteAll(Iterable<K> id) {
-
+        repository.deleteAllById(id);
     }
 
     @Override
     public void softDeleteById(K id) {
 
     }
+
+    @Override
+    public void softDeleteAll(Iterable<K> id) {
+
+    }
+
 }
