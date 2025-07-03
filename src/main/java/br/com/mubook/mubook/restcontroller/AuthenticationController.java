@@ -47,7 +47,7 @@ public class AuthenticationController {
         return ResponseEntity.ok(new AuthenticationResponse(token));
     }
 
-    @PostMapping("")
+    @PostMapping("/register")
     public ResponseEntity<String> registerAdmin(@Valid @RequestBody CriarAtualizarUsuarioRequest request) {
         try {
             Usuario usuario = helper.RegisterRequestToUsuario(request.nome(), request.cpf(), request.email(), request.senha(), request.role());

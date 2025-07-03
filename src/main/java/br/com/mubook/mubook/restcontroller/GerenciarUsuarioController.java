@@ -38,7 +38,7 @@ public class GerenciarUsuarioController {
         }
     }
 
-    @PostMapping("/register")
+    @PostMapping("")
     @PreAuthorize("hasRole('ADMINISTRADOR')")
     public ResponseEntity<String> register(@Valid @RequestBody CriarAtualizarUsuarioRequest request) {
 
