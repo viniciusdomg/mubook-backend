@@ -28,9 +28,11 @@ public class GerenciarUsuarioController {
     @GetMapping("")
     @PreAuthorize("hasRole('ADMINISTRADOR')")
     public ResponseEntity<Page<Usuario>> listar(@RequestParam(required = false, defaultValue = "0") int offset,
-                                                            @RequestParam(required = false, defaultValue = "0") int limit,
-                                                            @RequestParam(required = false) FiltrosUsuarioRequest filtros) {
+                                @RequestParam(required = false, defaultValue = "0") int limit,
+                                @RequestParam(required = false) String nome, @RequestParam(required = false) String cpf,
+                                @RequestParam(required = false) String genero) {
         try {
+            FiltrosUsuarioRequest filtros = new FiltrosUsuarioRequest(nome, cpf, genero);
             Page<Usuario> usuarios = usuarioService.findAllWithFilters(filtros, offset, limit);
             return ResponseEntity.ok(usuarios);
         }catch (Exception e){
@@ -52,7 +54,7 @@ public class GerenciarUsuarioController {
         }
     }
 
-    @DeleteMapping("/delete/all")
+    @DeleteMapping("/all")
     @PreAuthorize("hasRole('ADMINISTRADOR')")
     public ResponseEntity<String> deleteAll(@Valid @RequestBody Iterable<Long> request) {
         try{
