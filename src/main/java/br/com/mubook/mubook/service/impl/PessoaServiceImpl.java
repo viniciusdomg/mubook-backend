@@ -19,4 +19,9 @@ public class PessoaServiceImpl extends GenericServiceImpl<Pessoa, Long, PessoaEn
         this.repository = repository;
         this.mapper = mapper;
     }
+
+    @Override
+    public Pessoa findByEmail(String email) {
+        return mapper.toModel(repository.findByEmail(email));
+    }
 }

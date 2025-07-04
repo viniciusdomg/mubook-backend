@@ -12,13 +12,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/usuario")
+@RequestMapping("/api/usuario/")
 public class GerenciarUsuarioController {
 
     private final UsuarioService usuarioService;
@@ -26,24 +28,22 @@ public class GerenciarUsuarioController {
     private final UsuarioHelper helper;
 
     @GetMapping("")
-    @PreAuthorize("hasRole('ADMINISTRADOR')")
-    public ResponseEntity<Page<Usuario>> listar(@RequestParam(required = false, defaultValue = "0") int offset,
+    @PreAuthorize("hasAuthority('ROLE_ADMINISTRADOR')")
+    public Page<Usuario> listar(@RequestParam(required = false, defaultValue = "0") int offset,
                                 @RequestParam(required = false, defaultValue = "0") int limit,
                                 @RequestParam(required = false) String nome, @RequestParam(required = false) String cpf,
                                 @RequestParam(required = false) String genero) {
         try {
             FiltrosUsuarioRequest filtros = new FiltrosUsuarioRequest(nome, cpf, genero);
-            Page<Usuario> usuarios = usuarioService.findAllWithFilters(filtros, offset, limit);
-            return ResponseEntity.ok(usuarios);
+            return usuarioService.findAllWithFilters(filtros, offset, limit);
         }catch (Exception e){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @PostMapping("")
-    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    @PreAuthorize("hasAuthority('ROLE_ADMINISTRADOR')")
     public ResponseEntity<String> register(@Valid @RequestBody CriarAtualizarUsuarioRequest request) {
-
         try {
             Usuario usuario = helper.RegisterRequestToUsuario(request.nome(), request.cpf(), request.email(), request.senha(), request.role());
             usuarioService.save(usuario);
@@ -54,8 +54,8 @@ public class GerenciarUsuarioController {
         }
     }
 
-    @DeleteMapping("/all")
-    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    @DeleteMapping("all")
+    @PreAuthorize("hasAuthority('ROLE_ADMINISTRADOR')")
     public ResponseEntity<String> deleteAll(@Valid @RequestBody Iterable<Long> request) {
         try{
             usuarioService.hardDeleteAll(request);
@@ -63,5 +63,11 @@ public class GerenciarUsuarioController {
         }catch (Exception e){
             return ResponseEntity.badRequest().body(e.getMessage());
         }
+    }
+
+    @GetMapping("test")
+    public ResponseEntity<String> test() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return ResponseEntity.ok("Usuário autenticado: " + auth.getName() + " com autoridade: " + auth.getAuthorities());
     }
 }
