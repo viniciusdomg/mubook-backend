@@ -1,13 +1,14 @@
 package br.com.mubook.mubook.security;
 
-import br.com.mubook.mubook.enums.RoleUser;
 import br.com.mubook.mubook.model.Usuario;
+import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
-import java.util.stream.Collectors;
+import java.util.List;
 
+@Getter
 public class UsuarioDetails implements UserDetails {
 
     private final Usuario usuario;
@@ -18,9 +19,7 @@ public class UsuarioDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return RoleUser.getTiposUsuarios().stream()
-                .map(role -> new SimpleGrantedAuthority(role.getNome()))
-                .collect(Collectors.toList());
+        return List.of(new SimpleGrantedAuthority(usuario.getRoleUser().getAuthority()));
     }
 
     @Override

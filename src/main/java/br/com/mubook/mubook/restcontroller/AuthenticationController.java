@@ -2,7 +2,7 @@ package br.com.mubook.mubook.restcontroller;
 
 import br.com.mubook.mubook.dto.AuthenticationRequest;
 import br.com.mubook.mubook.dto.AuthenticationResponse;
-import br.com.mubook.mubook.dto.RegisterRequest;
+import br.com.mubook.mubook.dto.CriarAtualizarUsuarioRequest;
 import br.com.mubook.mubook.helper.UsuarioHelper;
 import br.com.mubook.mubook.model.Usuario;
 import br.com.mubook.mubook.security.JwtService;
@@ -47,8 +47,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String> register(@Valid @RequestBody RegisterRequest request) {
-
+    public ResponseEntity<String> registerAdmin(@Valid @RequestBody CriarAtualizarUsuarioRequest request) {
         try {
             Usuario usuario = helper.RegisterRequestToUsuario(request.nome(), request.cpf(), request.email(), request.senha(), request.role());
             usuarioService.save(usuario);

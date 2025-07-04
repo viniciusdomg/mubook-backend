@@ -31,23 +31,34 @@ public class JwtService {
     }
 
     public String generateToken(UserDetails userDetails) {
+        UsuarioDetails usuarioDetails = (UsuarioDetails) userDetails;
+
+        String role = usuarioDetails.getUsuario().getRoleUser().getAuthority();
+
         return JWT.create()
-                .withSubject(userDetails.getUsername())
+                .withSubject(usuarioDetails.getUsername())
+                .withClaim("role", role)
                 .withIssuedAt(new Date())
-                .withExpiresAt(new Date(System.currentTimeMillis() + 24 * 60 * 60 * 1000)) // 24h
+                .withExpiresAt(new Date(System.currentTimeMillis() + 24 * 60 * 60 * 1000))
                 .sign(algorithm);
     }
+
 
     public String extractUsername(String token) {
         DecodedJWT jwt = JWT.decode(token);
         return jwt.getSubject();
     }
 
-    public boolean isTokenValid(String token, UserDetails userDetails) {
+    public String extractRole(String token) {
+        DecodedJWT jwt = JWT.decode(token);
+        return jwt.getClaim("role").asString();
+    }
+
+    public boolean isTokenValid(String token, String username) {
         try {
             JWTVerifier verifier = JWT.require(algorithm).build();
             verifier.verify(token);
-            return extractUsername(token).equals(userDetails.getUsername());
+            return extractUsername(token).equals(username);
         } catch (JWTVerificationException exception) {
             return false;
         }

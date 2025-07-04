@@ -4,17 +4,17 @@ import java.util.List;
 
 public enum RoleUser {
 
-    ADMINISTRADOR("Administrador"), ASSOCIADO("Associado");
+    ROLE_ADMINISTRADOR,
+    ROLE_ASSOCIADO;
 
-    private final String nome;
-
-    RoleUser(String nome) {
-        this.nome = nome;
+    /**
+     * Retorna todas as roles disponíveis no sistema.
+     */
+    public static List<RoleUser> getTiposUsuarios() {
+        return List.of(RoleUser.ROLE_ADMINISTRADOR, RoleUser.ROLE_ASSOCIADO);
     }
 
-    public String getNome() { return nome; }
-
-    public static List<RoleUser> getTiposUsuarios() {
-        return List.of(RoleUser.ADMINISTRADOR, RoleUser.ASSOCIADO);
+    public String getAuthority() {
+        return name();
     }
 }

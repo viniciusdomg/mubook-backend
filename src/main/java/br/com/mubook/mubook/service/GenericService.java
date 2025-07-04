@@ -19,4 +19,6 @@ public interface GenericService<M, K> {
     void hardDeleteAll(Iterable<K> id);
 
     void softDeleteById(K id);
+
+    void softDeleteAll(Iterable<K> id);
 }
