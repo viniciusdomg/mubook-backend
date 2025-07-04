@@ -4,6 +4,7 @@ import br.com.mubook.mubook.model.TipoQuadra;
 import br.com.mubook.mubook.service.TipoQuadraService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,12 +16,14 @@ public class TipoQuadraController {
 
     private final TipoQuadraService tipoQuadraService;
 
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     @GetMapping
     public ResponseEntity<List<TipoQuadra>> findAll() {
         List<TipoQuadra> lista = tipoQuadraService.findAll();
         return ResponseEntity.ok(lista);
     }
 
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     @GetMapping("/{id}")
     public ResponseEntity<TipoQuadra> findById(@PathVariable Integer id) {
         TipoQuadra tipoQuadra = tipoQuadraService.findById(id);
@@ -30,12 +33,14 @@ public class TipoQuadraController {
         return ResponseEntity.ok(tipoQuadra);
     }
 
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     @PostMapping
     public ResponseEntity<TipoQuadra> create(@RequestBody TipoQuadra tipoQuadra) {
         TipoQuadra created = tipoQuadraService.save(tipoQuadra);
         return ResponseEntity.ok(created);
     }
 
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     @PutMapping("/{id}")
     public ResponseEntity<TipoQuadra> update(@PathVariable Integer id, @RequestBody TipoQuadra tipoQuadra) {
         tipoQuadra.setId(id);
@@ -43,6 +48,7 @@ public class TipoQuadraController {
         return ResponseEntity.ok(updated);
     }
 
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
         tipoQuadraService.hardDeleteById(id);
