@@ -21,7 +21,7 @@ public class QuadraEntity {
 
     @ManyToOne
     @JoinColumn(name = "tipo_quadra", nullable = false)
-    private TipoQuadraEntity tipoQuadraEntity;
+    private TipoQuadraEntity tipoQuadra;
 
     @Column(name = "quantidade_maxima", nullable = false)
     private Integer quantidadeMaxima;
