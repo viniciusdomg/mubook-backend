@@ -38,6 +38,7 @@ public class JwtService {
         return JWT.create()
                 .withSubject(usuarioDetails.getUsername())
                 .withClaim("role", role)
+                .withJWTId(java.util.UUID.randomUUID().toString())
                 .withIssuedAt(new Date())
                 .withExpiresAt(new Date(System.currentTimeMillis() + 24 * 60 * 60 * 1000))
                 .sign(algorithm);
