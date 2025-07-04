@@ -37,5 +37,5 @@ public class ReservaEntity {
     private QuadraEntity quadra;
 
     @OneToMany(mappedBy = "reserva", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PessoaEntity> convidados;
+    private List<ConvidadoEntity> convidados;
 }
