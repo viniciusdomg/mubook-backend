@@ -49,7 +49,7 @@ public class AuthenticationController {
     @PostMapping("/register")
     public ResponseEntity<String> registerAdmin(@Valid @RequestBody CriarAtualizarUsuarioRequest request) {
         try {
-            Usuario usuario = helper.RegisterRequestToUsuario(request.nome(), request.cpf(), request.email(), request.senha(), request.role());
+            Usuario usuario = helper.RegisterRequestToUsuario(request.nome(), request.cpf(), request.email(), request.senha(), request.tipo());
             usuarioService.save(usuario);
 
             return ResponseEntity.ok("Conta cadastrada com sucesso!");
