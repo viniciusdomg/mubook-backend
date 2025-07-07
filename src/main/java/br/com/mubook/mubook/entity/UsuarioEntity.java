@@ -31,7 +31,7 @@ public class UsuarioEntity {
     @Column(name = "role_user", nullable = false)
     private RoleUser roleUser;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "pessoa_id", referencedColumnName = "id", nullable = false)
     private PessoaEntity pessoa;
 }

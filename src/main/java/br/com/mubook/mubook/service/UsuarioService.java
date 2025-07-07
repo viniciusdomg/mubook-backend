@@ -8,6 +8,8 @@ import java.util.Optional;
 
 public interface UsuarioService extends GenericService<Usuario, Long> {
 
+    Usuario save(Usuario model);
+
     Optional<Usuario> findByEmailOrCpf(String search);
 
     Page<Usuario> findAllWithFilters(FiltrosUsuarioRequest filtros, int offset, int limit);

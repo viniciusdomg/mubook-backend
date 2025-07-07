@@ -11,5 +11,5 @@ public record CriarAtualizarUsuarioRequest(Long id,
                                            @NotBlank @Email String email,
                                            @NotBlank @Pattern(regexp = "\\d{11}") String cpf,
                                            @NotBlank @Size(min = 8) String senha,
-                                           RoleUser role ) {
+                                           RoleUser tipo) {
 }
