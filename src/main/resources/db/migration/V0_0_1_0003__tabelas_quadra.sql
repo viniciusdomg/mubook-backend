@@ -1,11 +1,11 @@
 -- Criação da tabela tipo_quadra
-CREATE TABLE tipo_quadra (
+CREATE TABLE IF NOT EXISTS tipo_quadra (
                              id SERIAL PRIMARY KEY,
                              nome VARCHAR(100) NOT NULL
 );
 
 -- Criação da tabela quadra
-CREATE TABLE quadra (
+CREATE TABLE IF NOT EXISTS quadra (
                         id SERIAL PRIMARY KEY,
                         nome VARCHAR(255) NOT NULL,
                         tipo_quadra INTEGER NOT NULL,
