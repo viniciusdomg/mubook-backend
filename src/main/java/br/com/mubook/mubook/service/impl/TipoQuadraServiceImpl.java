@@ -5,7 +5,13 @@ import br.com.mubook.mubook.jparepository.TipoQuadraJpaRepository;
 import br.com.mubook.mubook.mapper.TipoQuadraEntityMapper;
 import br.com.mubook.mubook.model.TipoQuadra;
 import br.com.mubook.mubook.service.TipoQuadraService;
+import br.com.mubook.mubook.utils.PageUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class TipoQuadraServiceImpl extends GenericServiceImpl<TipoQuadra, Integer, TipoQuadraEntity> implements TipoQuadraService {
@@ -18,5 +24,13 @@ public class TipoQuadraServiceImpl extends GenericServiceImpl<TipoQuadra, Intege
         super(repository, mapper);
         this.repository = repository;
         this.mapper = mapper;
+    }
+
+    @Override
+    public Page<TipoQuadra> findAllPageable(int offset, int limit) {
+        Pageable pageable = PageRequest.of(offset, limit);
+        Page<TipoQuadraEntity> entities = repository.findAll(pageable);
+        List<TipoQuadra> tipos = mapper.toModel(entities.getContent());
+        return PageUtils.mapPage(entities, tipos);
     }
 }

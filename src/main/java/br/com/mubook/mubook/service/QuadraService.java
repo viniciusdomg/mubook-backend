@@ -1,9 +1,12 @@
 package br.com.mubook.mubook.service;
 
-import br.com.mubook.mubook.dto.QuadraCreateDTO;
 import br.com.mubook.mubook.model.Quadra;
 
+import java.util.List;
+
 public interface QuadraService extends GenericService<Quadra, Integer> {
-    Quadra createFromDTO(QuadraCreateDTO dto);
-    Quadra updateFromDTO(Integer id, QuadraCreateDTO dto);
+
+    void update(Integer id, Quadra dto);
+
+    List<Quadra> findAllByTipoQuadra(String tipoQuadra);
 }
