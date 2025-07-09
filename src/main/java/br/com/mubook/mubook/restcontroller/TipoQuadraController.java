@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/tipoQuadra")
+@RequestMapping("/api/tipoQuadra/")
 @RequiredArgsConstructor
 public class TipoQuadraController {
 
@@ -33,7 +33,7 @@ public class TipoQuadraController {
 
 
     @PreAuthorize("hasRole('ADMINISTRADOR')")
-    @GetMapping("/{id}")
+    @GetMapping("{id}")
     public ResponseEntity<TipoQuadra> findById(@PathVariable Integer id) {
         TipoQuadra tipoQuadra = tipoQuadraService.findById(id);
         if (tipoQuadra == null) {
@@ -50,7 +50,7 @@ public class TipoQuadraController {
     }
 
     @PreAuthorize("hasRole('ADMINISTRADOR')")
-    @PutMapping("/{id}")
+    @PutMapping("{id}")
     public ResponseEntity<TipoQuadra> update(@PathVariable Integer id, @RequestBody TipoQuadra tipoQuadra) {
         tipoQuadra.setId(id);
         TipoQuadra updated = tipoQuadraService.save(tipoQuadra);
@@ -58,7 +58,7 @@ public class TipoQuadraController {
     }
 
     @PreAuthorize("hasRole('ADMINISTRADOR')")
-    @DeleteMapping("/{id}")
+    @DeleteMapping("{id}")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
         tipoQuadraService.hardDeleteById(id);
         return ResponseEntity.noContent().build();
