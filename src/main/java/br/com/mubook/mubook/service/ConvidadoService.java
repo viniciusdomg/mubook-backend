@@ -1,5 +1,6 @@
 package br.com.mubook.mubook.service;
 
+import br.com.mubook.mubook.dto.ConvidadoCreateDto;
 import br.com.mubook.mubook.model.Convidado;
 
 /**
@@ -9,4 +10,11 @@ import br.com.mubook.mubook.model.Convidado;
  * Não há necessidade de métodos adicionais por enquanto.
  */
 public interface ConvidadoService extends GenericService<Convidado, Long> {
+
+    /**
+     * Cria uma nova Pessoa e a associa a um novo Convidado.
+     * @param dto Os dados para a criação da pessoa/convidado.
+     * @return O modelo do Convidado criado.
+     */
+    Convidado criarConvidadoComPessoa(ConvidadoCreateDto dto);
 }

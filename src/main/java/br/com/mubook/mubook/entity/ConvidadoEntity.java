@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "convidado")
+@Table(name = "convidado", schema = "mubook")
 public class ConvidadoEntity {
 
     @Id
@@ -19,8 +19,4 @@ public class ConvidadoEntity {
     @ManyToOne(optional = false)
     @JoinColumn(name = "pessoa_id")
     private PessoaEntity pessoa;
-
-    @ManyToOne
-    @JoinColumn(name = "reserva_id")
-    private ReservaEntity reserva;
 }
