@@ -33,13 +33,27 @@ public class GerenciarUsuarioController {
     @PreAuthorize("hasAuthority('ROLE_ADMINISTRADOR')")
     public PageResponse<UsuarioResponse> listar(@RequestParam(required = false, defaultValue = "1") int offset,
                                         @RequestParam(required = false, defaultValue = "1") int limit,
-                                        @RequestParam(required = false) String nome, @RequestParam(required = false) String cpf,
-                                        @RequestParam(required = false) String genero) {
+                                        @RequestParam(required = false) String nome, @RequestParam(required = false) String cpf) {
         try {
-            FiltrosUsuarioRequest filtros = new FiltrosUsuarioRequest(nome, cpf, genero);
+            FiltrosUsuarioRequest filtros = new FiltrosUsuarioRequest(nome, cpf);
             Page<Usuario> page = usuarioService.findAllWithFilters(filtros, offset, limit);
             List<UsuarioResponse> response = helper.PageUsuarioToUsuarioResponse(page.getContent());
-            return new PageResponse<>(response, page.getTotalElements(), page.getTotalPages(), page.getSize(), page.getNumber());
+            return new PageResponse<>(response, page.getTotalElements(), page.getTotalPages(), page.getSize(),
+                    page.getNumber(), page.isFirst(), page.isLast(), page.isEmpty());
+        }catch (Exception e){
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("{id}")
+    @PreAuthorize("hasAuthority('ROLE_ADMINISTRADOR')")
+    public ResponseEntity<UsuarioResponse> findById(@PathVariable Long id) {
+        try {
+            Usuario usuario = usuarioService.findById(id);
+            if (usuario == null) {
+                return ResponseEntity.notFound().build();
+            }
+            return ResponseEntity.ok(helper.UsuarioToUsuarioResponse(usuario));
         }catch (Exception e){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }

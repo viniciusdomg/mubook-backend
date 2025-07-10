@@ -52,7 +52,7 @@ public class UsuarioServiceImpl extends GenericServiceImpl<Usuario, Long, Usuari
     public Page<Usuario> findAllWithFilters(FiltrosUsuarioRequest filtros, int offset, int limit) {
         Pageable pageable = PageRequest.of(offset, limit);
         Page<UsuarioEntity> entities = repository.findAll(
-                UsuarioSpecifications.comFiltros(filtros.nome(), filtros.cpf(), filtros.genero()),
+                UsuarioSpecifications.comFiltros(filtros.nome(), filtros.cpf()),
                 pageable);
 
         List<Usuario> usuarios = mapper.toModel(entities.getContent());
