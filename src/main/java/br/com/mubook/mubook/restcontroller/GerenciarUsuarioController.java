@@ -31,8 +31,8 @@ public class GerenciarUsuarioController {
 
     @GetMapping("")
     @PreAuthorize("hasAuthority('ROLE_ADMINISTRADOR')")
-    public PageResponse<UsuarioResponse> listar(@RequestParam(required = false, defaultValue = "0") int offset,
-                                        @RequestParam(required = false, defaultValue = "0") int limit,
+    public PageResponse<UsuarioResponse> listar(@RequestParam(required = false, defaultValue = "1") int offset,
+                                        @RequestParam(required = false, defaultValue = "1") int limit,
                                         @RequestParam(required = false) String nome, @RequestParam(required = false) String cpf,
                                         @RequestParam(required = false) String genero) {
         try {

@@ -4,6 +4,7 @@ import br.com.mubook.mubook.dto.QuadraCreateDTO;
 import br.com.mubook.mubook.exception.BussinesException;
 import br.com.mubook.mubook.helper.QuadraHelper;
 import br.com.mubook.mubook.model.Quadra;
+import br.com.mubook.mubook.model.TipoQuadra;
 import br.com.mubook.mubook.service.QuadraService;
 import br.com.mubook.mubook.service.TipoQuadraService;
 import jakarta.validation.Valid;
@@ -55,9 +56,9 @@ public class QuadraController {
 
     @PreAuthorize("hasRole('ADMINISTRADOR')")
     @PostMapping
-    public ResponseEntity<String> create(@RequestBody QuadraCreateDTO quadraDTO) {
+    public ResponseEntity<String> create(@RequestBody QuadraCreateDTO dto) {
         try {
-            Quadra quadra = helper.RequestToQuadra(quadraDTO);
+            Quadra quadra = helper.RequestToQuadra(dto, getTipoQuadra(dto));
             service.save(quadra);
             return ResponseEntity.ok("Quadra criada com sucesso!");
         }catch (Exception e){
@@ -70,7 +71,7 @@ public class QuadraController {
     public ResponseEntity<String> update(@PathVariable Integer id, @RequestBody QuadraCreateDTO dto) {
         try {
             validate(dto);
-            Quadra quadra = helper.RequestToQuadra(dto);
+            Quadra quadra = helper.RequestToQuadra(dto, getTipoQuadra(dto));
             quadra.setTipoQuadra(tipoService.findById(quadra.getTipoQuadra().getId()));
             service.update(id, quadra);
             return ResponseEntity.ok("Dados da quadra atualizado com sucesso!");
@@ -101,9 +102,16 @@ public class QuadraController {
         }
     }
 
-    public void validate(QuadraCreateDTO dto){
+    private void validate(QuadraCreateDTO dto){
         if(dto.tipoQuadraId() == null || dto.tipoQuadraId() == 0){
             throw new BussinesException("preencher campo Tipo de Quadra");
         }
+    }
+
+    private TipoQuadra getTipoQuadra(QuadraCreateDTO dto){
+        if(dto.tipoQuadraId() == null || dto.tipoQuadraId() == 0){
+            return null;
+        }
+        return tipoService.findById(dto.tipoQuadraId());
     }
 }
