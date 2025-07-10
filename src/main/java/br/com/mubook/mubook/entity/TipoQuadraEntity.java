@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "tipo_quadra")
+@Table(name = "tipo_quadra", schema = "mubook")
 public class TipoQuadraEntity {
 
     @Id
