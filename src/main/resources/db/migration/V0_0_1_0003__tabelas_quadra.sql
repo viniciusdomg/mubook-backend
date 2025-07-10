@@ -12,5 +12,5 @@ CREATE TABLE IF NOT EXISTS mubook.quadra (
                         quantidade_maxima INTEGER NOT NULL,
                         foto_url VARCHAR(255),
 
-                        CONSTRAINT fk_tipo_quadra FOREIGN KEY (tipo_quadra) REFERENCES tipo_quadra(id)
+                        CONSTRAINT fk_tipo_quadra FOREIGN KEY (tipo_quadra) REFERENCES mubook.tipo_quadra(id)
 );
