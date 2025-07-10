@@ -5,17 +5,18 @@ import org.springframework.data.jpa.domain.Specification;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import jakarta.persistence.criteria.Predicate;
 
 public class QuadraSpecifications {
 
-    public static Specification<QuadraEntity> comFiltros(String tipoQuadra) {
+    public static Specification<QuadraEntity> comFiltros(Long tipoQuadra) {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
 
-            if (tipoQuadra != null && !tipoQuadra.isEmpty()) {
+            if (tipoQuadra != null && tipoQuadra > 0) {
                 predicates.add(
-                        cb.like(cb.lower(root.get("tipoQuadra").get("nome")), "%" + tipoQuadra.toLowerCase() + "%")
+                        cb.equal(root.get("tipoQuadra").get("id"), tipoQuadra)
                 );
             }
 

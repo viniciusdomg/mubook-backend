@@ -10,9 +10,9 @@ public class QuadraHelper {
 
     public Quadra RequestToQuadra(QuadraCreateDTO dto){
         Quadra quadra = new Quadra();
-        quadra.setNome(dto.getNome());
-        quadra.setQuantidadeMaxima(dto.getQuantidadeMaxima());
-        quadra.setFoto_url(dto.getFoto_url());
+        quadra.setNome(dto.nome());
+        quadra.setQuantidadeMaxima(dto.quantidadeMaxima());
+        quadra.setFoto_url(dto.foto_url());
 
         return quadra;
     }

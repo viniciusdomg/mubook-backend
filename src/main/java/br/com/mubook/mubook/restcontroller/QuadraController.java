@@ -8,13 +8,12 @@ import br.com.mubook.mubook.service.QuadraService;
 import br.com.mubook.mubook.service.TipoQuadraService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/quadra/")
@@ -29,10 +28,12 @@ public class QuadraController {
 
     @PreAuthorize("hasRole('ADMINISTRADOR')")
     @GetMapping
-    public ResponseEntity<List<Quadra>> findAll(@RequestParam(required = false) String tipoQuadra) {
+    public ResponseEntity<Page<Quadra>> findAll(@RequestParam(required = false) Long tipoQuadra,
+                                                @RequestParam(required = false, defaultValue = "0") int offset,
+                                                @RequestParam(required = false, defaultValue = "0") int limit) {
         try {
-            List<Quadra> lista = service.findAllByTipoQuadra(tipoQuadra);
-            return ResponseEntity.ok(lista);
+            Page<Quadra> page = service.findAllByTipoQuadra(tipoQuadra, offset, limit);
+            return ResponseEntity.ok(page);
         }catch (Exception e){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
@@ -101,7 +102,7 @@ public class QuadraController {
     }
 
     public void validate(QuadraCreateDTO dto){
-        if(dto.getTipoQuadraId() == null || dto.getTipoQuadraId() == 0){
+        if(dto.tipoQuadraId() == null || dto.tipoQuadraId() == 0){
             throw new BussinesException("preencher campo Tipo de Quadra");
         }
     }

@@ -3,7 +3,6 @@ package br.com.mubook.mubook.restcontroller;
 import br.com.mubook.mubook.model.TipoQuadra;
 import br.com.mubook.mubook.service.TipoQuadraService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -23,14 +22,6 @@ public class TipoQuadraController {
         List<TipoQuadra> lista = tipoQuadraService.findAll();
         return ResponseEntity.ok(lista);
     }
-    @PreAuthorize("hasRole('ADMINISTRADOR')")
-    @GetMapping("page")
-    public ResponseEntity<Page<TipoQuadra>> findAllPageable(@RequestParam(required = false) Integer offset,
-                                                            @RequestParam(required = false) Integer size) {
-        Page<TipoQuadra> lista = tipoQuadraService.findAllPageable(offset, size);
-        return ResponseEntity.ok(lista);
-    }
-
 
     @PreAuthorize("hasRole('ADMINISTRADOR')")
     @GetMapping("{id}")
