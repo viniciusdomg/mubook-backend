@@ -29,11 +29,12 @@ public class QuadraController {
 
     @PreAuthorize("hasRole('ADMINISTRADOR')")
     @GetMapping
-    public ResponseEntity<Page<Quadra>> findAll(@RequestParam(required = false) Long tipoQuadra,
+    public ResponseEntity<Page<Quadra>> findAll(@RequestParam(required = false) Long filter,
                                                 @RequestParam(required = false, defaultValue = "0") int offset,
-                                                @RequestParam(required = false, defaultValue = "0") int limit) {
+                                                @RequestParam(required = false, defaultValue = "20") int limit) {
         try {
-            Page<Quadra> page = service.findAllByTipoQuadra(tipoQuadra, offset, limit);
+            System.out.println("Filtro tipoQuadra CONTROLLER = " + filter);
+            Page<Quadra> page = service.findAllByTipoQuadra(filter, offset, limit);
             return ResponseEntity.ok(page);
         }catch (Exception e){
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
@@ -58,6 +59,7 @@ public class QuadraController {
     @PostMapping
     public ResponseEntity<String> create(@RequestBody QuadraCreateDTO dto) {
         try {
+            validate(dto);
             Quadra quadra = helper.RequestToQuadra(dto, getTipoQuadra(dto));
             service.save(quadra);
             return ResponseEntity.ok("Quadra criada com sucesso!");

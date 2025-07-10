@@ -35,17 +35,17 @@ public class TipoQuadraController {
 
     @PreAuthorize("hasRole('ADMINISTRADOR')")
     @PostMapping
-    public ResponseEntity<TipoQuadra> create(@RequestBody TipoQuadra tipoQuadra) {
-        TipoQuadra created = tipoQuadraService.save(tipoQuadra);
-        return ResponseEntity.ok(created);
+    public ResponseEntity<String> create(@RequestBody TipoQuadra tipoQuadra) {
+        tipoQuadraService.save(tipoQuadra);
+        return ResponseEntity.ok("Tipo de Quadra criado com sucesso!");
     }
 
     @PreAuthorize("hasRole('ADMINISTRADOR')")
     @PutMapping("{id}")
-    public ResponseEntity<TipoQuadra> update(@PathVariable Integer id, @RequestBody TipoQuadra tipoQuadra) {
+    public ResponseEntity<String> update(@PathVariable Integer id, @RequestBody TipoQuadra tipoQuadra) {
         tipoQuadra.setId(id);
-        TipoQuadra updated = tipoQuadraService.save(tipoQuadra);
-        return ResponseEntity.ok(updated);
+        tipoQuadraService.save(tipoQuadra);
+        return ResponseEntity.ok("Tipo de Quadra atualizado com sucesso!");
     }
 
     @PreAuthorize("hasRole('ADMINISTRADOR')")
