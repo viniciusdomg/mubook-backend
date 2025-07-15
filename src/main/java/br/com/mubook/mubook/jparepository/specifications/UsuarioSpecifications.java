@@ -8,7 +8,7 @@ import java.util.List;
 
 public class UsuarioSpecifications {
 
-    public static Specification<UsuarioEntity> comFiltros(String nome, String cpf, String genero) {
+    public static Specification<UsuarioEntity> comFiltros(String nome, String cpf) {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
 
@@ -20,13 +20,7 @@ public class UsuarioSpecifications {
 
             if (cpf != null && !cpf.isEmpty()) {
                 predicates.add(
-                        cb.equal(root.get("pessoa").get("cpf"), cpf)
-                );
-            }
-
-            if (genero != null && !genero.isEmpty()) {
-                predicates.add(
-                        cb.equal(root.get("pessoa").get("genero"), genero)
+                        cb.like(cb.lower(root.get("pessoa").get("cpf")), "%" + cpf + "%")
                 );
             }
 

@@ -25,7 +25,13 @@ public class UsuarioHelper {
                 usuario.getPessoa() != null ? usuario.getPessoa().getNome() : null,
                 usuario.getPessoa() != null ? usuario.getPessoa().getCpf() : null,
                 usuario.getPessoa() != null ? usuario.getPessoa().getEmail() : null,
-                usuario.getRoleUser() != null ? usuario.getRoleUser().getDescricao() : null
+                usuario.getRoleUser() != null ? usuario.getRoleUser().getDescricao() : null,
+                usuario.isAtivo()
         )).toList();
+    }
+
+    public UsuarioResponse UsuarioToUsuarioResponse(Usuario usuario){
+        return new UsuarioResponse(usuario.getId(), usuario.getPessoa().getNome(), usuario.getPessoa().getCpf(),
+                usuario.getPessoa().getEmail(), usuario.getRoleUser().getDescricao(), usuario.isAtivo());
     }
 }

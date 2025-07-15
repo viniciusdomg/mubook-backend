@@ -4,5 +4,6 @@ public record UsuarioResponse(Long id,
                               String nome,
                               String cpf,
                               String email,
-                              String tipo) {
+                              String tipo,
+                              Boolean ativo) {
 }
