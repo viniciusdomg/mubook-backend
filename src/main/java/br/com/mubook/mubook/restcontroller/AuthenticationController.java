@@ -14,10 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -56,5 +53,14 @@ public class AuthenticationController {
         }catch (BadCredentialsException e){
             return ResponseEntity.badRequest().body(e.getMessage());
         }
+    }
+
+    @GetMapping("/role")
+    public ResponseEntity<String> getUserRole(@RequestHeader("Authorization") String authHeader) {
+        // Remove o prefixo "Bearer "
+        String token = authHeader.replace("Bearer ", "");
+
+        String role = jwtService.extractRole(token);
+        return ResponseEntity.ok(role);
     }
 }
