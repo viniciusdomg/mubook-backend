@@ -1,10 +1,18 @@
 package br.com.mubook.mubook.restcontroller;
 
+import br.com.mubook.mubook.dto.ReservaConvidadoDto;
+import br.com.mubook.mubook.dto.ReservaCreateDto;
+import br.com.mubook.mubook.dto.ReservaUpdateDto;
 import br.com.mubook.mubook.model.Reserva;
 import br.com.mubook.mubook.service.ReservaService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -16,75 +24,72 @@ import java.util.List;
  *                 controlador.
  */
 @RestController
-@RequestMapping("/api/reserva")
+@RequestMapping("/api/reserva/")
 @RequiredArgsConstructor
 public class ReservaController {
 
     private final ReservaService reservaService;
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     public ResponseEntity<List<Reserva>> findAll() {
-        List<Reserva> lista = reservaService.findAll();
-        return ResponseEntity.ok(lista);
+        return ResponseEntity.ok(reservaService.findAll());
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("{id}")
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'ASSOCIADO')")
     public ResponseEntity<Reserva> findById(@PathVariable Long id) {
-        Reserva reserva = reservaService.findById(id);
-        // O findById do serviço já deve tratar o caso de não encontrar,
-        // mas uma verificação dupla não é ruim.
-        if (reserva == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(reserva);
+        return ResponseEntity.ok(reservaService.findById(id));
     }
 
+    /**
+     * Endpoint para criar uma nova reserva.
+     * Recebe um DTO com os IDs de usuário, quadra e convidados.
+     */
     @PostMapping
-    public ResponseEntity<Reserva> create(@RequestBody Reserva reserva) {
-        Reserva created = reservaService.save(reserva);
-        return ResponseEntity.ok(created);
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'ASSOCIADO')")
+    public ResponseEntity<Reserva> create(@Valid @RequestBody ReservaCreateDto reservaDto) {
+        Reserva novaReserva = reservaService.criarReserva(reservaDto);
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
+                .buildAndExpand(novaReserva.getId()).toUri();
+        return ResponseEntity.created(uri).body(novaReserva);
     }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<Reserva> update(@PathVariable Long id, @RequestBody Reserva reserva) {
-        reserva.setId(id);
-        Reserva updated = reservaService.save(reserva);
-        return ResponseEntity.ok(updated);
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        reservaService.hardDeleteById(id);
-        return ResponseEntity.noContent().build();
-    }
-
-    // --- Endpoints Específicos ---
 
     /**
      * Endpoint para cancelar uma reserva.
-     * Usamos o método PATCH pois é uma atualização parcial no recurso.
      */
-    @PatchMapping("/{id}/cancelar")
+    @PutMapping("{id}/cancelar")
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR','ASSOCIADO')")
     public ResponseEntity<Reserva> cancelar(@PathVariable Long id) {
         Reserva reservaCancelada = reservaService.cancelarReserva(id);
         return ResponseEntity.ok(reservaCancelada);
     }
 
-    /**
-     * DTO (Data Transfer Object) simples para receber a nova data da remarcação.
-     */
-    record RemarcarRequest(LocalDateTime novaDataHora) {
+    @PutMapping("/{id}/finalizar")
+    public ResponseEntity<Reserva> finalizar(@PathVariable Long id) {
+        Reserva reservaFinalizada = reservaService.finalizarReserva(id);
+        return ResponseEntity.ok(reservaFinalizada);
     }
 
-    /**
-     * Endpoint para remarcar uma reserva.
-     * Usamos PATCH também para uma atualização parcial.
-     * 
-     * @param request O corpo da requisição contendo a nova data e hora.
-     */
-    @PatchMapping("/{id}/remarcar")
-    public ResponseEntity<Reserva> remarcar(@PathVariable Long id, @RequestBody RemarcarRequest request) {
-        Reserva reservaRemarcada = reservaService.remarcarReserva(id, request.novaDataHora());
-        return ResponseEntity.ok(reservaRemarcada);
+    @PutMapping("{id}")
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'ASSOCIADO')")
+    public ResponseEntity<Reserva> editar(@PathVariable Long id, @Valid @RequestBody ReservaUpdateDto reservaDto) {
+        Reserva reservaEditada = reservaService.editarReserva(id, reservaDto);
+        return ResponseEntity.ok(reservaEditada);
     }
+
+    @PostMapping("{id}/convidados")
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'ASSOCIADO')")
+    public ResponseEntity<Reserva> adicionarConvidados(@PathVariable Long id, @Valid @RequestBody ReservaConvidadoDto dto) {
+        Reserva reservaAtualizada = reservaService.adicionarConvidados(id, dto.getConvidadosIds());
+        return ResponseEntity.ok(reservaAtualizada);
+    }
+
+    @DeleteMapping("{id}/convidados")
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'ASSOCIADO')")
+    public ResponseEntity<Reserva> removerConvidados(@PathVariable Long id, @Valid @RequestBody ReservaConvidadoDto dto) {
+        Reserva reservaAtualizada = reservaService.removerConvidados(id, dto.getConvidadosIds());
+        return ResponseEntity.ok(reservaAtualizada);
+    }
+
 }

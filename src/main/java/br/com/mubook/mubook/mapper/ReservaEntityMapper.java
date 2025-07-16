@@ -1,6 +1,6 @@
 package br.com.mubook.mubook.mapper;
 
-import br.com.mubook.mubook.entity.ReservaEntity;
+import br.com.mubook.mubook.entity.HistoricoReservasEntity;
 import br.com.mubook.mubook.model.Reserva;
 import org.mapstruct.Mapper;
 
@@ -13,5 +13,5 @@ import org.mapstruct.Mapper;
  */
 @Mapper(componentModel = "spring", uses = { UsuarioEntityMapper.class, QuadraEntityMapper.class,
         PessoaEntityMapper.class })
-public interface ReservaEntityMapper extends GenericEntityMapper<Reserva, ReservaEntity> {
+public interface ReservaEntityMapper extends GenericEntityMapper<Reserva, HistoricoReservasEntity> {
 }

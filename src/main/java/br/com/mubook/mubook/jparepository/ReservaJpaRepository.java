@@ -1,6 +1,6 @@
 package br.com.mubook.mubook.jparepository;
 
-import br.com.mubook.mubook.entity.ReservaEntity;
+import br.com.mubook.mubook.entity.HistoricoReservasEntity;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -11,5 +11,5 @@ import org.springframework.stereotype.Repository;
  * O tipo da entidade é ReservaEntity e o tipo do ID é Long.
  */
 @Repository
-public interface ReservaJpaRepository extends GenericRepository<ReservaEntity, Long> {
+public interface ReservaJpaRepository extends GenericRepository<HistoricoReservasEntity, Long> {
 }
