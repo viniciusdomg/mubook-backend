@@ -18,4 +18,7 @@ public interface UsuarioJpaRepository extends GenericRepository<UsuarioEntity, L
             "from PessoaEntity p where p.email = :email OR p.cpf = :cpf")
     Boolean existsByEmailOrCpf(String email, String cpf);
 
+    @Query("select u " +
+            "from UsuarioEntity u where u.pessoa.id = :idPessoa")
+    UsuarioEntity findByPessoa(Long idPessoa);
 }

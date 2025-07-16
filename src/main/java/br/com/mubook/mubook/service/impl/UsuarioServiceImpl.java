@@ -60,6 +60,11 @@ public class UsuarioServiceImpl extends GenericServiceImpl<Usuario, Long, Usuari
     }
 
     @Override
+    public Usuario findByPessoaId(Long id) {
+        return mapper.toModel(repository.findByPessoa(id));
+    }
+
+    @Override
     public Usuario save(Usuario model) {
         if(existsByEmailOrCpf(model.getPessoa().getEmail(), model.getPessoa().getCpf())){
             throw new BadCredentialsException("Email ou CPF já cadastrado");
@@ -74,6 +79,11 @@ public class UsuarioServiceImpl extends GenericServiceImpl<Usuario, Long, Usuari
         UsuarioEntity entity = mapper.fromModel(model);
         UsuarioEntity savedEntity = repository.save(entity);
         return mapper.toModel(savedEntity);
+    }
+
+    @Override
+    public Usuario update(Usuario model) {
+        return mapper.toModel(repository.save(mapper.fromModel(model)));
     }
 
     private Boolean existsByEmailOrCpf(String email, String cpf) {

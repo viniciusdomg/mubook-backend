@@ -10,7 +10,11 @@ public interface UsuarioService extends GenericService<Usuario, Long> {
 
     Usuario save(Usuario model);
 
+    Usuario update (Usuario model);
+
     Optional<Usuario> findByEmailOrCpf(String search);
 
     Page<Usuario> findAllWithFilters(FiltrosUsuarioRequest filtros, int offset, int limit);
+
+    Usuario findByPessoaId(Long id);
 }

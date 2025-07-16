@@ -20,6 +20,9 @@ public class UsuarioEntity {
             allocationSize = 1)
     private Long id;
 
+    @Column(name = "foto_url")
+    private String foto_url;
+
     @NotNull
     @Column
     private boolean ativo;
