@@ -1,6 +1,6 @@
 package br.com.mubook.mubook.restcontroller;
 
-import br.com.mubook.mubook.dto.AtualizarPerfilRequest;
+import br.com.mubook.mubook.dto.PerfilRequest;
 import br.com.mubook.mubook.dto.PerfilResponse;
 import br.com.mubook.mubook.helper.PessoaHelper;
 import br.com.mubook.mubook.model.Usuario;
@@ -42,10 +42,15 @@ public class PerfilController {
 
     @PutMapping("")
     @PreAuthorize("hasAnyAuthority('ROLE_ADMINISTRADOR', 'ROLE_ASSOCIADO')")
-    public ResponseEntity<String> updatePerfil(@RequestBody AtualizarPerfilRequest request) {
+    public ResponseEntity<String> updatePerfil(@RequestBody PerfilRequest request) {
         try{
             var pessoa = pessoaService.findById(request.id());
             pessoa = helper.RequestToPessoa(request, pessoa);
+            Usuario u = usuarioService.findByPessoaId(pessoa.getId());
+            if (u != null && !pessoa.getFoto_url().isEmpty()) {
+                u.setFoto_url(pessoa.getFoto_url());
+                usuarioService.update(u);
+            }
             pessoaService.save(pessoa);
             return ResponseEntity.ok("Perfil atualizado com sucesso!");
         }catch (Exception e){

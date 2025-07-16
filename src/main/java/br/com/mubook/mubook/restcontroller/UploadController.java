@@ -37,6 +37,15 @@ public class UploadController {
                         .body("Arquivo muito grande. O tamanho máximo permitido é 2MB.");
             }
 
+            String contentType = file.getContentType();
+            if (contentType == null ||
+                    (!contentType.equalsIgnoreCase("image/png")
+                            && !contentType.equalsIgnoreCase("image/jpeg")
+                            && !contentType.equalsIgnoreCase("image/gif")
+                            && !contentType.equalsIgnoreCase("image/webp"))) {
+                return ResponseEntity.badRequest().body("Formato inválido. Apenas imagens PNG, JPEG, GIF ou WEBP são permitidas.");
+            }
+
             File uploadDirectory = new File(uploadDir);
             if (!uploadDirectory.isAbsolute()) {
                 uploadDirectory = new File(System.getProperty("user.dir"), uploadDir);

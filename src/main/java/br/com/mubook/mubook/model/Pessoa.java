@@ -13,6 +13,8 @@ public class Pessoa {
 
     private Long id;
 
+    private String foto_url;
+
     private boolean ativo;
     
     private String nome;
