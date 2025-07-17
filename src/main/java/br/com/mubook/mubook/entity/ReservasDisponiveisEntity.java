@@ -14,8 +14,8 @@ import br.com.mubook.mubook.enums.StatusReserva;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "reservas_disponiveis", schema = "mubook") // Adicionei o schema para consistência
-public class ReservaDisponiveisEntity {
+@Table(name = "reservas_disponiveis", schema = "mubook")
+public class ReservasDisponiveisEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,7 +25,7 @@ public class ReservaDisponiveisEntity {
     private LocalDateTime dataHora;
 
     @ManyToOne
-    @JoinColumn(name = "usuario_id", nullable = false)
+    @JoinColumn(name = "usuario_id")
     private UsuarioEntity usuario;
 
     @Enumerated(EnumType.STRING)
@@ -36,12 +36,4 @@ public class ReservaDisponiveisEntity {
     @JoinColumn(name = "quadra_id", nullable = false)
     private QuadraEntity quadra;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "reserva_convidado",
-            schema = "mubook",
-            joinColumns = @JoinColumn(name = "reserva_id"),
-            inverseJoinColumns = @JoinColumn(name = "convidado_id")
-    )
-    private List<ConvidadoEntity> convidados;
 }

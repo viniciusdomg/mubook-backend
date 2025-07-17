@@ -5,24 +5,21 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.time.DayOfWeek;
 import java.time.LocalTime;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "horario_funcionamento")
+@Table(name = "horario_funcionamento", schema = "mubook")
 public class HorarioFuncionamentoEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "dia_semana", nullable = false)
-    private DayOfWeek diaSemana;
+    @Column(name = "dias_semana", nullable = false)
+    private String diaSemana;
 
     @Column(name = "horario_abertura", nullable = false)
     private LocalTime horarioAbertura;

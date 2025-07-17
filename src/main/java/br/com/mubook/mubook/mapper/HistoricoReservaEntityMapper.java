@@ -13,5 +13,5 @@ import org.mapstruct.Mapper;
  */
 @Mapper(componentModel = "spring", uses = { UsuarioEntityMapper.class, QuadraEntityMapper.class,
         PessoaEntityMapper.class })
-public interface ReservaEntityMapper extends GenericEntityMapper<Reserva, HistoricoReservasEntity> {
+public interface HistoricoReservaEntityMapper extends GenericEntityMapper<Reserva, HistoricoReservasEntity> {
 }

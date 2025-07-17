@@ -11,5 +11,5 @@ import org.springframework.stereotype.Repository;
  * O tipo da entidade é ReservaEntity e o tipo do ID é Long.
  */
 @Repository
-public interface ReservaJpaRepository extends GenericRepository<HistoricoReservasEntity, Long> {
+public interface HistoricoReservasJpaRepository extends GenericRepository<HistoricoReservasEntity, Long> {
 }

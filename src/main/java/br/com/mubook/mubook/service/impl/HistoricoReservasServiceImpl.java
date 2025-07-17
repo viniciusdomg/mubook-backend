@@ -8,9 +8,9 @@ import br.com.mubook.mubook.entity.HistoricoReservasEntity;
 import br.com.mubook.mubook.entity.UsuarioEntity;
 import br.com.mubook.mubook.enums.StatusReserva;
 import br.com.mubook.mubook.jparepository.*;
-import br.com.mubook.mubook.mapper.ReservaEntityMapper;
+import br.com.mubook.mubook.mapper.HistoricoReservaEntityMapper;
 import br.com.mubook.mubook.model.Reserva;
-import br.com.mubook.mubook.service.ReservaService;
+import br.com.mubook.mubook.service.HistoricoReservasService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,17 +25,17 @@ import java.util.List;
  * Spring.
  */
 @Service
-public class ReservaServiceImpl extends GenericServiceImpl<Reserva, Long, HistoricoReservasEntity> implements ReservaService {
+public class HistoricoReservasServiceImpl extends GenericServiceImpl<Reserva, Long, HistoricoReservasEntity> implements HistoricoReservasService {
 
-    private final ReservaJpaRepository repository;
-    private final ReservaEntityMapper mapper;
+    private final HistoricoReservasJpaRepository repository;
+    private final HistoricoReservaEntityMapper mapper;
     private final UsuarioJpaRepository usuarioRepository; // Nova dependência
     private final QuadraJpaRepository quadraRepository;   // Nova dependência
     private final ConvidadoJpaRepository convidadoRepository; // Nova dependência
 
-    public ReservaServiceImpl(ReservaJpaRepository repository, ReservaEntityMapper mapper,
-                              UsuarioJpaRepository usuarioRepository, QuadraJpaRepository quadraRepository,
-                              ConvidadoJpaRepository convidadoRepository) {
+    public HistoricoReservasServiceImpl(HistoricoReservasJpaRepository repository, HistoricoReservaEntityMapper mapper,
+                                        UsuarioJpaRepository usuarioRepository, QuadraJpaRepository quadraRepository,
+                                        ConvidadoJpaRepository convidadoRepository) {
         super(repository, mapper);
         this.repository = repository;
         this.mapper = mapper;

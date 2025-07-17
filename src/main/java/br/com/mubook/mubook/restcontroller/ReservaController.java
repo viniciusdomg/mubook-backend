@@ -4,7 +4,7 @@ import br.com.mubook.mubook.dto.ReservaConvidadoDto;
 import br.com.mubook.mubook.dto.ReservaCreateDto;
 import br.com.mubook.mubook.dto.ReservaUpdateDto;
 import br.com.mubook.mubook.model.Reserva;
-import br.com.mubook.mubook.service.ReservaService;
+import br.com.mubook.mubook.service.HistoricoReservasService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -27,7 +26,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ReservaController {
 
-    private final ReservaService reservaService;
+    private final HistoricoReservasService reservaService;
 
     @GetMapping
     public ResponseEntity<List<Reserva>> findAll() {

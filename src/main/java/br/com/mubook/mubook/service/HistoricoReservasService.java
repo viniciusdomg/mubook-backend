@@ -6,7 +6,7 @@ import br.com.mubook.mubook.model.Reserva;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public interface ReservaService extends GenericService<Reserva, Long> {
+public interface HistoricoReservasService extends GenericService<Reserva, Long> {
 
     /**
      * Cria uma nova reserva com base nos dados fornecidos.
