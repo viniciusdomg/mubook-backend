@@ -1,12 +1,9 @@
 package br.com.mubook.mubook.restcontroller;
 
 import br.com.mubook.mubook.dto.CriarHorarioFuncionamentoRequest;
-import br.com.mubook.mubook.dto.FiltrosUsuarioRequest;
 import br.com.mubook.mubook.dto.PageResponse;
-import br.com.mubook.mubook.dto.UsuarioResponse;
 import br.com.mubook.mubook.helper.HorarioFuncionamentoHelper;
 import br.com.mubook.mubook.model.HorarioFuncionamento;
-import br.com.mubook.mubook.model.Usuario;
 import br.com.mubook.mubook.service.HorarioFuncionamentoService;
 import br.com.mubook.mubook.service.TipoQuadraService;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +14,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/horario-funcionamento/")
