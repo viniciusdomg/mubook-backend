@@ -7,9 +7,14 @@ import br.com.mubook.mubook.mapper.TipoQuadraEntityMapper;
 import br.com.mubook.mubook.model.HorarioFuncionamento;
 import br.com.mubook.mubook.model.TipoQuadra;
 import br.com.mubook.mubook.service.HorarioFuncionamentoService;
+import br.com.mubook.mubook.utils.PageUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -35,5 +40,13 @@ public class HorarioFuncionamentoServiceImpl
     public Optional<HorarioFuncionamento> findByTipoQuadraEntityAndDiaSemana(TipoQuadra tipo, DayOfWeek diaSemana) {
         return repository.findByTipoQuadraEntityAndDiaSemana(tipoQuadraMapper.fromModel(tipo),diaSemana)
                 .map(mapper::toModel);
+    }
+
+    @Override
+    public Page<HorarioFuncionamento> findAllPageable(int offset, int limit) {
+        Pageable pageable = PageRequest.of(offset, limit);
+        Page<HorarioFuncionamentoEntity> entities = repository.findAll(pageable);
+        List<HorarioFuncionamento> horarios = mapper.toModel(entities.getContent());
+        return PageUtils.mapPage(entities, horarios);
     }
 }

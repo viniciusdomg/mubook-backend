@@ -1,14 +1,21 @@
 package br.com.mubook.mubook.restcontroller;
 
 import br.com.mubook.mubook.dto.CriarHorarioFuncionamentoRequest;
+import br.com.mubook.mubook.dto.FiltrosUsuarioRequest;
+import br.com.mubook.mubook.dto.PageResponse;
+import br.com.mubook.mubook.dto.UsuarioResponse;
 import br.com.mubook.mubook.helper.HorarioFuncionamentoHelper;
 import br.com.mubook.mubook.model.HorarioFuncionamento;
+import br.com.mubook.mubook.model.Usuario;
 import br.com.mubook.mubook.service.HorarioFuncionamentoService;
 import br.com.mubook.mubook.service.TipoQuadraService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -25,9 +32,17 @@ public class HorarioFuncionamentoController {
 
     @GetMapping
     @PreAuthorize("hasRole('ADMINISTRADOR')")
-    public ResponseEntity<List<HorarioFuncionamento>> findAll() {
-        List<HorarioFuncionamento> lista = horarioFuncionamentoService.findAll();
-        return ResponseEntity.ok(lista);
+    public ResponseEntity<PageResponse<HorarioFuncionamento>> findAll(
+            @RequestParam(required = false, defaultValue = "0") int offset,
+            @RequestParam(required = false, defaultValue = "20") int limit) {
+        try{
+            Page<HorarioFuncionamento> page = horarioFuncionamentoService.findAllPageable(offset, limit);
+            PageResponse<HorarioFuncionamento> response = helper.PageToPageResponse(page);
+            return ResponseEntity.ok(response);
+        }catch (Exception e){
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
     }
 
     @GetMapping("/{id}")
@@ -35,7 +50,7 @@ public class HorarioFuncionamentoController {
     public ResponseEntity<HorarioFuncionamento> findById(@PathVariable Integer id) {
         HorarioFuncionamento horario = horarioFuncionamentoService.findById(id);
         if (horario == null) {
-            return ResponseEntity.notFound().build();
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
         return ResponseEntity.ok(horario);
     }
@@ -64,8 +79,8 @@ public class HorarioFuncionamentoController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMINISTRADOR')")
-    public ResponseEntity<Void> delete(@PathVariable Integer id) {
+    public ResponseEntity<String> delete(@PathVariable Integer id) {
         horarioFuncionamentoService.hardDeleteById(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok("Horário de Funcionamento Deletado");
     }
 }

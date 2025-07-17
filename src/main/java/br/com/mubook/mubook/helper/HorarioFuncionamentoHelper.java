@@ -1,8 +1,10 @@
 package br.com.mubook.mubook.helper;
 
 import br.com.mubook.mubook.dto.CriarHorarioFuncionamentoRequest;
+import br.com.mubook.mubook.dto.PageResponse;
 import br.com.mubook.mubook.model.HorarioFuncionamento;
 import br.com.mubook.mubook.model.TipoQuadra;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalTime;
@@ -20,5 +22,10 @@ public class HorarioFuncionamentoHelper {
                 LocalTime.parse(request.fechamento()) : null);
 
         return horarioFuncionamento;
+    }
+
+    public PageResponse<HorarioFuncionamento> PageToPageResponse(Page<HorarioFuncionamento> page) {
+        return new PageResponse<>(page.getContent(), page.getTotalElements(), page.getTotalPages(), page.getSize(),
+                page.getNumber(), page.isFirst(), page.isLast(), page.isEmpty());
     }
 }

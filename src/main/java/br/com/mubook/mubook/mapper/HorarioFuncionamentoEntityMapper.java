@@ -5,6 +5,8 @@ import br.com.mubook.mubook.model.HorarioFuncionamento;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring", uses = { TipoQuadraEntityMapper.class })
 public interface HorarioFuncionamentoEntityMapper
         extends GenericEntityMapper<HorarioFuncionamento, HorarioFuncionamentoEntity> {
@@ -16,4 +18,8 @@ public interface HorarioFuncionamentoEntityMapper
     @Mapping(source = "tipoQuadraEntity", target = "tipoQuadra")
     @Override
     HorarioFuncionamento toModel(HorarioFuncionamentoEntity entity);
+
+    @Mapping(source = "tipoQuadraEntity", target = "tipoQuadra")
+    @Override
+    List<HorarioFuncionamento> toModel(List<HorarioFuncionamentoEntity> entity);
 }
