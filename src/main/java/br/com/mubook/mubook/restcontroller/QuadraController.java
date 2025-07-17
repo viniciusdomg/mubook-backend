@@ -1,51 +1,119 @@
 package br.com.mubook.mubook.restcontroller;
 
+import br.com.mubook.mubook.dto.QuadraCreateDTO;
+import br.com.mubook.mubook.exception.BussinesException;
+import br.com.mubook.mubook.helper.QuadraHelper;
 import br.com.mubook.mubook.model.Quadra;
+import br.com.mubook.mubook.model.TipoQuadra;
 import br.com.mubook.mubook.service.QuadraService;
+import br.com.mubook.mubook.service.TipoQuadraService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
-@RequestMapping("/api/quadra")
+@RequestMapping("/api/quadra/")
 @RequiredArgsConstructor
 public class QuadraController {
 
-    private final QuadraService quadraService;
+    private final QuadraService service;
 
+    private final TipoQuadraService tipoService;
+
+    private final QuadraHelper helper;
+
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     @GetMapping
-    public ResponseEntity<List<Quadra>> findAll() {
-        List<Quadra> lista = quadraService.findAll();
-        return ResponseEntity.ok(lista);
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<Quadra> findById(@PathVariable Integer id) {
-        Quadra quadra = quadraService.findById(id);
-        if (quadra == null) {
-            return ResponseEntity.notFound().build();
+    public ResponseEntity<Page<Quadra>> findAll(@RequestParam(required = false) Long filter,
+                                                @RequestParam(required = false, defaultValue = "0") int offset,
+                                                @RequestParam(required = false, defaultValue = "20") int limit) {
+        try {
+            System.out.println("Filtro tipoQuadra CONTROLLER = " + filter);
+            Page<Quadra> page = service.findAllByTipoQuadra(filter, offset, limit);
+            return ResponseEntity.ok(page);
+        }catch (Exception e){
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
-        return ResponseEntity.ok(quadra);
     }
 
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    @GetMapping("{id}")
+    public ResponseEntity<Quadra> findById(@PathVariable Integer id) {
+        try {
+            Quadra quadra = service.findById(id);
+            if (quadra == null) {
+                return ResponseEntity.notFound().build();
+            }
+            return ResponseEntity.ok(quadra);
+        }catch (Exception e){
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+    }
+
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     @PostMapping
-    public ResponseEntity<Quadra> create(@RequestBody Quadra quadra) {
-        Quadra created = quadraService.save(quadra);
-        return ResponseEntity.ok(created);
+    public ResponseEntity<String> create(@RequestBody QuadraCreateDTO dto) {
+        try {
+            validate(dto);
+            Quadra quadra = helper.RequestToQuadra(dto, getTipoQuadra(dto));
+            service.save(quadra);
+            return ResponseEntity.ok("Quadra criada com sucesso!");
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Quadra> update(@PathVariable Integer id, @RequestBody Quadra quadra) {
-        quadra.setId(id);
-        Quadra updated = quadraService.save(quadra);
-        return ResponseEntity.ok(updated);
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    @PutMapping("{id}")
+    public ResponseEntity<String> update(@PathVariable Integer id, @RequestBody QuadraCreateDTO dto) {
+        try {
+            validate(dto);
+            Quadra quadra = helper.RequestToQuadra(dto, getTipoQuadra(dto));
+            quadra.setTipoQuadra(tipoService.findById(quadra.getTipoQuadra().getId()));
+            service.update(id, quadra);
+            return ResponseEntity.ok("Dados da quadra atualizado com sucesso!");
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Integer id) {
-        quadraService.hardDeleteById(id);
-        return ResponseEntity.noContent().build();
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    @DeleteMapping("{id}")
+    public ResponseEntity<String> delete(@PathVariable Integer id) {
+        try {
+            service.hardDeleteById(id);
+            return ResponseEntity.ok("Quadra deletada com sucesso!");
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    @DeleteMapping("all")
+    public ResponseEntity<String> deleteAll(@Valid @RequestBody Iterable<Integer> ids) {
+        try {
+            service.hardDeleteAll(ids);
+            return ResponseEntity.ok("Quadras deletadas com sucesso!");
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    private void validate(QuadraCreateDTO dto){
+        if(dto.tipoQuadraId() == null || dto.tipoQuadraId() == 0){
+            throw new BussinesException("preencher campo Tipo de Quadra");
+        }
+    }
+
+    private TipoQuadra getTipoQuadra(QuadraCreateDTO dto){
+        if(dto.tipoQuadraId() == null || dto.tipoQuadraId() == 0){
+            return null;
+        }
+        return tipoService.findById(dto.tipoQuadraId());
     }
 }

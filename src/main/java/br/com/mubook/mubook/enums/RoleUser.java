@@ -1,20 +1,27 @@
 package br.com.mubook.mubook.enums;
 
+import lombok.Getter;
+
 import java.util.List;
 
+@Getter
 public enum RoleUser {
 
-    ADMINISTRADOR("Administrador"), ASSOCIADO("Associado");
+    ROLE_ADMINISTRADOR("Administrador"),
+    ROLE_ASSOCIADO("Associado");
 
-    private final String nome;
+    private final String descricao;
 
-    RoleUser(String nome) {
-        this.nome = nome;
+    RoleUser(String descricao) {
+        this.descricao = descricao;
     }
-
-    public String getNome() { return nome; }
 
     public static List<RoleUser> getTiposUsuarios() {
-        return List.of(RoleUser.ADMINISTRADOR, RoleUser.ASSOCIADO);
+        return List.of(RoleUser.ROLE_ADMINISTRADOR, RoleUser.ROLE_ASSOCIADO);
     }
+
+    public String getAuthority() {
+        return name();
+    }
+
 }

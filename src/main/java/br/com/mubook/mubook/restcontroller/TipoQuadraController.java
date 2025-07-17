@@ -4,24 +4,27 @@ import br.com.mubook.mubook.model.TipoQuadra;
 import br.com.mubook.mubook.service.TipoQuadraService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/tipoQuadra")
+@RequestMapping("/api/tipoQuadra/")
 @RequiredArgsConstructor
 public class TipoQuadraController {
 
     private final TipoQuadraService tipoQuadraService;
 
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     @GetMapping
     public ResponseEntity<List<TipoQuadra>> findAll() {
         List<TipoQuadra> lista = tipoQuadraService.findAll();
         return ResponseEntity.ok(lista);
     }
 
-    @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    @GetMapping("{id}")
     public ResponseEntity<TipoQuadra> findById(@PathVariable Integer id) {
         TipoQuadra tipoQuadra = tipoQuadraService.findById(id);
         if (tipoQuadra == null) {
@@ -30,20 +33,23 @@ public class TipoQuadraController {
         return ResponseEntity.ok(tipoQuadra);
     }
 
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     @PostMapping
-    public ResponseEntity<TipoQuadra> create(@RequestBody TipoQuadra tipoQuadra) {
-        TipoQuadra created = tipoQuadraService.save(tipoQuadra);
-        return ResponseEntity.ok(created);
+    public ResponseEntity<String> create(@RequestBody TipoQuadra tipoQuadra) {
+        tipoQuadraService.save(tipoQuadra);
+        return ResponseEntity.ok("Tipo de Quadra criado com sucesso!");
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<TipoQuadra> update(@PathVariable Integer id, @RequestBody TipoQuadra tipoQuadra) {
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    @PutMapping("{id}")
+    public ResponseEntity<String> update(@PathVariable Integer id, @RequestBody TipoQuadra tipoQuadra) {
         tipoQuadra.setId(id);
-        TipoQuadra updated = tipoQuadraService.save(tipoQuadra);
-        return ResponseEntity.ok(updated);
+        tipoQuadraService.save(tipoQuadra);
+        return ResponseEntity.ok("Tipo de Quadra atualizado com sucesso!");
     }
 
-    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    @DeleteMapping("{id}")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
         tipoQuadraService.hardDeleteById(id);
         return ResponseEntity.noContent().build();

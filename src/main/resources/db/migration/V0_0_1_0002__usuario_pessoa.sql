@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS mubook.usuario (
     id BIGINT PRIMARY KEY DEFAULT nextval('mubook.seq_usuario_id'),
     ativo BOOLEAN NOT NULL DEFAULT TRUE,
     senha VARCHAR(255) NOT NULL,
-    role_user VARCHAR(13) NOT NULL,
+    role_user VARCHAR(19) NOT NULL,
     pessoa_id BIGINT NOT NULL,
     FOREIGN KEY (pessoa_id) REFERENCES mubook.pessoa(id)
 );

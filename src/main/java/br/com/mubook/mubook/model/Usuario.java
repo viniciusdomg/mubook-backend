@@ -12,6 +12,8 @@ public class Usuario {
 
     private Long id;
 
+    private String foto_url;
+
     private boolean ativo;
 
     private String senha;

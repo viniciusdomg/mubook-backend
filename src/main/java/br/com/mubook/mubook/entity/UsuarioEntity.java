@@ -20,6 +20,9 @@ public class UsuarioEntity {
             allocationSize = 1)
     private Long id;
 
+    @Column(name = "foto_url")
+    private String foto_url;
+
     @NotNull
     @Column
     private boolean ativo;
@@ -31,7 +34,7 @@ public class UsuarioEntity {
     @Column(name = "role_user", nullable = false)
     private RoleUser roleUser;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "pessoa_id", referencedColumnName = "id", nullable = false)
     private PessoaEntity pessoa;
 }

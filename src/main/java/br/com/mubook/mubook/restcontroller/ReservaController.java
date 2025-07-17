@@ -8,7 +8,6 @@ import br.com.mubook.mubook.service.ReservaService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -24,20 +23,18 @@ import java.util.List;
  *                 controlador.
  */
 @RestController
-@RequestMapping("/api/reserva/")
+@RequestMapping("/api/reserva")
 @RequiredArgsConstructor
 public class ReservaController {
 
     private final ReservaService reservaService;
 
     @GetMapping
-    @PreAuthorize("hasRole('ADMINISTRADOR')")
     public ResponseEntity<List<Reserva>> findAll() {
         return ResponseEntity.ok(reservaService.findAll());
     }
 
-    @GetMapping("{id}")
-    @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'ASSOCIADO')")
+    @GetMapping("/{id}")
     public ResponseEntity<Reserva> findById(@PathVariable Long id) {
         return ResponseEntity.ok(reservaService.findById(id));
     }
@@ -47,7 +44,6 @@ public class ReservaController {
      * Recebe um DTO com os IDs de usuário, quadra e convidados.
      */
     @PostMapping
-    @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'ASSOCIADO')")
     public ResponseEntity<Reserva> create(@Valid @RequestBody ReservaCreateDto reservaDto) {
         Reserva novaReserva = reservaService.criarReserva(reservaDto);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
@@ -58,8 +54,7 @@ public class ReservaController {
     /**
      * Endpoint para cancelar uma reserva.
      */
-    @PutMapping("{id}/cancelar")
-    @PreAuthorize("hasAnyRole('ADMINISTRADOR','ASSOCIADO')")
+    @PatchMapping("/{id}/cancelar")
     public ResponseEntity<Reserva> cancelar(@PathVariable Long id) {
         Reserva reservaCancelada = reservaService.cancelarReserva(id);
         return ResponseEntity.ok(reservaCancelada);
@@ -71,22 +66,19 @@ public class ReservaController {
         return ResponseEntity.ok(reservaFinalizada);
     }
 
-    @PutMapping("{id}")
-    @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'ASSOCIADO')")
+    @PutMapping("/{id}")
     public ResponseEntity<Reserva> editar(@PathVariable Long id, @Valid @RequestBody ReservaUpdateDto reservaDto) {
         Reserva reservaEditada = reservaService.editarReserva(id, reservaDto);
         return ResponseEntity.ok(reservaEditada);
     }
 
-    @PostMapping("{id}/convidados")
-    @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'ASSOCIADO')")
+    @PostMapping("/{id}/convidados")
     public ResponseEntity<Reserva> adicionarConvidados(@PathVariable Long id, @Valid @RequestBody ReservaConvidadoDto dto) {
         Reserva reservaAtualizada = reservaService.adicionarConvidados(id, dto.getConvidadosIds());
         return ResponseEntity.ok(reservaAtualizada);
     }
 
-    @DeleteMapping("{id}/convidados")
-    @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'ASSOCIADO')")
+    @DeleteMapping("/{id}/convidados")
     public ResponseEntity<Reserva> removerConvidados(@PathVariable Long id, @Valid @RequestBody ReservaConvidadoDto dto) {
         Reserva reservaAtualizada = reservaService.removerConvidados(id, dto.getConvidadosIds());
         return ResponseEntity.ok(reservaAtualizada);

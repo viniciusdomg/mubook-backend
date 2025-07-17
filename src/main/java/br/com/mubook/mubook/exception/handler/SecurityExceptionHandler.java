@@ -1,4 +1,4 @@
-package br.com.mubook.mubook.exception;
+package br.com.mubook.mubook.exception.handler;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

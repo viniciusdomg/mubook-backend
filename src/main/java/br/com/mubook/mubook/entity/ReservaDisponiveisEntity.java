@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import br.com.mubook.mubook.enums.StatusReserva;
 
@@ -35,4 +36,12 @@ public class ReservaDisponiveisEntity {
     @JoinColumn(name = "quadra_id", nullable = false)
     private QuadraEntity quadra;
 
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "reserva_convidado",
+            schema = "mubook",
+            joinColumns = @JoinColumn(name = "reserva_id"),
+            inverseJoinColumns = @JoinColumn(name = "convidado_id")
+    )
+    private List<ConvidadoEntity> convidados;
 }

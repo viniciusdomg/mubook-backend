@@ -1,5 +1,6 @@
 package br.com.mubook.mubook.service.impl;
 
+ // Importe todos os repositórios necessários
 import br.com.mubook.mubook.dto.ReservaCreateDto;
 import br.com.mubook.mubook.dto.ReservaUpdateDto;
 import br.com.mubook.mubook.entity.ConvidadoEntity;
