@@ -2,6 +2,7 @@ package br.com.mubook.mubook.jparepository;
 
 import br.com.mubook.mubook.entity.QuadraEntity;
 import br.com.mubook.mubook.entity.ReservasDisponiveisEntity;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public interface ReservasDisponiveisJpaRepository extends GenericRepository<ReservasDisponiveisEntity, Long> {
+public interface ReservasDisponiveisJpaRepository extends GenericRepository<ReservasDisponiveisEntity, Long>, JpaSpecificationExecutor<ReservasDisponiveisEntity> {
 
     @Transactional
     @Modifying
@@ -20,4 +21,6 @@ public interface ReservasDisponiveisJpaRepository extends GenericRepository<Rese
     boolean existsByQuadraAndDataHora(QuadraEntity quadra, LocalDateTime dataHora);
 
     List<ReservasDisponiveisEntity> quadra(QuadraEntity quadra);
+
+
 }

@@ -23,6 +23,10 @@ public class HorarioFuncionamento {
         return String.join(".", string);
     }
 
+    public boolean contemDia(DayOfWeek dia) {
+        return List.of(diaSemana.split("\\.")).contains(dia.name());
+    }
+
 //    public boolean validarHorario(LocalDateTime horario) {
 //        DayOfWeek dia = horario.getDayOfWeek();
 //        LocalTime hora = horario.toLocalTime();

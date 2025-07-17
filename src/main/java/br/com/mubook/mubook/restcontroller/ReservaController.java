@@ -5,13 +5,17 @@ import br.com.mubook.mubook.dto.ReservaCreateDto;
 import br.com.mubook.mubook.dto.ReservaUpdateDto;
 import br.com.mubook.mubook.model.Reserva;
 import br.com.mubook.mubook.service.HistoricoReservasService;
+import br.com.mubook.mubook.service.ReservasDisponiveisService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 /**
@@ -22,20 +26,25 @@ import java.util.List;
  *                 controlador.
  */
 @RestController
-@RequestMapping("/api/reserva")
+@RequestMapping("/api/reserva/")
 @RequiredArgsConstructor
 public class ReservaController {
 
-    private final HistoricoReservasService reservaService;
+    private final HistoricoReservasService historicoReservasService;
+
+    private final ReservasDisponiveisService reservasDisponiveisService;
 
     @GetMapping
-    public ResponseEntity<List<Reserva>> findAll() {
-        return ResponseEntity.ok(reservaService.findAll());
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'ASSOCIADO')")
+    public ResponseEntity<List<Reserva>> reservasDisponiveis(
+            @RequestParam(required = false) Long idTipoQuadra, @RequestParam(required = false) LocalDate data,
+            @RequestParam(required = false) LocalTime hora) {
+        return ResponseEntity.ok(reservasDisponiveisService.findReservasWithFilter(idTipoQuadra, data, hora));
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("{id}")
     public ResponseEntity<Reserva> findById(@PathVariable Long id) {
-        return ResponseEntity.ok(reservaService.findById(id));
+        return ResponseEntity.ok(historicoReservasService.findById(id));
     }
 
     /**
@@ -44,7 +53,7 @@ public class ReservaController {
      */
     @PostMapping
     public ResponseEntity<Reserva> create(@Valid @RequestBody ReservaCreateDto reservaDto) {
-        Reserva novaReserva = reservaService.criarReserva(reservaDto);
+        Reserva novaReserva = historicoReservasService.criarReserva(reservaDto);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
                 .buildAndExpand(novaReserva.getId()).toUri();
         return ResponseEntity.created(uri).body(novaReserva);
@@ -53,33 +62,33 @@ public class ReservaController {
     /**
      * Endpoint para cancelar uma reserva.
      */
-    @PatchMapping("/{id}/cancelar")
+    @PatchMapping("{id}/cancelar")
     public ResponseEntity<Reserva> cancelar(@PathVariable Long id) {
-        Reserva reservaCancelada = reservaService.cancelarReserva(id);
+        Reserva reservaCancelada = historicoReservasService.cancelarReserva(id);
         return ResponseEntity.ok(reservaCancelada);
     }
 
-    @PutMapping("/{id}/finalizar")
+    @PutMapping("{id}/finalizar")
     public ResponseEntity<Reserva> finalizar(@PathVariable Long id) {
-        Reserva reservaFinalizada = reservaService.finalizarReserva(id);
+        Reserva reservaFinalizada = historicoReservasService.finalizarReserva(id);
         return ResponseEntity.ok(reservaFinalizada);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("{id}")
     public ResponseEntity<Reserva> editar(@PathVariable Long id, @Valid @RequestBody ReservaUpdateDto reservaDto) {
-        Reserva reservaEditada = reservaService.editarReserva(id, reservaDto);
+        Reserva reservaEditada = historicoReservasService.editarReserva(id, reservaDto);
         return ResponseEntity.ok(reservaEditada);
     }
 
     @PostMapping("/{id}/convidados")
     public ResponseEntity<Reserva> adicionarConvidados(@PathVariable Long id, @Valid @RequestBody ReservaConvidadoDto dto) {
-        Reserva reservaAtualizada = reservaService.adicionarConvidados(id, dto.getConvidadosIds());
+        Reserva reservaAtualizada = historicoReservasService.adicionarConvidados(id, dto.getConvidadosIds());
         return ResponseEntity.ok(reservaAtualizada);
     }
 
-    @DeleteMapping("/{id}/convidados")
+    @DeleteMapping("{id}/convidados")
     public ResponseEntity<Reserva> removerConvidados(@PathVariable Long id, @Valid @RequestBody ReservaConvidadoDto dto) {
-        Reserva reservaAtualizada = reservaService.removerConvidados(id, dto.getConvidadosIds());
+        Reserva reservaAtualizada = historicoReservasService.removerConvidados(id, dto.getConvidadosIds());
         return ResponseEntity.ok(reservaAtualizada);
     }
 

@@ -29,9 +29,9 @@ public class HistoricoReservasServiceImpl extends GenericServiceImpl<Reserva, Lo
 
     private final HistoricoReservasJpaRepository repository;
     private final HistoricoReservaEntityMapper mapper;
-    private final UsuarioJpaRepository usuarioRepository; // Nova dependência
-    private final QuadraJpaRepository quadraRepository;   // Nova dependência
-    private final ConvidadoJpaRepository convidadoRepository; // Nova dependência
+    private final UsuarioJpaRepository usuarioRepository;
+    private final QuadraJpaRepository quadraRepository;
+    private final ConvidadoJpaRepository convidadoRepository;
 
     public HistoricoReservasServiceImpl(HistoricoReservasJpaRepository repository, HistoricoReservaEntityMapper mapper,
                                         UsuarioJpaRepository usuarioRepository, QuadraJpaRepository quadraRepository,

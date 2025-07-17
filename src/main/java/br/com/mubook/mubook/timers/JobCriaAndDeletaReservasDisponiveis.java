@@ -8,6 +8,7 @@ import br.com.mubook.mubook.model.TipoQuadra;
 import br.com.mubook.mubook.service.HorarioFuncionamentoService;
 import br.com.mubook.mubook.service.QuadraService;
 import br.com.mubook.mubook.service.ReservasDisponiveisService;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -30,13 +31,19 @@ public class JobCriaAndDeletaReservasDisponiveis {
 
     private final HorarioFuncionamentoService horarioFuncionamentoService;
 
- //   @Scheduled(cron = "0 0 0 * * *")
+    @PostConstruct
+    public void inicializarReservas() {
+        removerReservasAntigas();
+        criarReservasDisponiveis();
+    }
+
+    @Scheduled(cron = "0 0 0 * * *")
     public void removerReservasAntigas() {
         LocalDateTime agora = LocalDateTime.now();
         reservaService.deleteAllByReservasDataBefore(agora.toLocalDate().atStartOfDay());
     }
 
-//    @Scheduled(cron = "0 5 0 * * *") // 00:05
+    @Scheduled(cron = "0 5 0 * * *")
     public void criarReservasDisponiveis() {
         LocalDate hoje = LocalDate.now();
         LocalDate dataLimite = hoje.plusDays(30);
@@ -50,7 +57,7 @@ public class JobCriaAndDeletaReservasDisponiveis {
                 TipoQuadra tipo = quadra.getTipoQuadra();
 
                 Optional<HorarioFuncionamento> horarioOpt =
-                        horarioFuncionamentoService.findByTipoQuadraEntityAndDiaSemana(tipo, diaSemana);
+                        horarioFuncionamentoService.findByTipoQuadraEntityAndDiaSemana(tipo, diaSemana.name());
 
                 if (horarioOpt.isEmpty()) {
                     continue;

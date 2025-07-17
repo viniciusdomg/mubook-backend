@@ -24,10 +24,6 @@ public class ReservasDisponiveisEntity {
     @Column(name = "data_hora", nullable = false)
     private LocalDateTime dataHora;
 
-    @ManyToOne
-    @JoinColumn(name = "usuario_id")
-    private UsuarioEntity usuario;
-
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private StatusReserva status;

@@ -37,8 +37,8 @@ public class HorarioFuncionamentoServiceImpl
     }
 
     @Override
-    public Optional<HorarioFuncionamento> findByTipoQuadraEntityAndDiaSemana(TipoQuadra tipo, DayOfWeek diaSemana) {
-        return repository.findByTipoQuadraEntityAndDiaSemana(tipoQuadraMapper.fromModel(tipo),diaSemana)
+    public Optional<HorarioFuncionamento> findByTipoQuadraEntityAndDiaSemana(TipoQuadra tipo, String diaSemana) {
+        return repository.findbyTipoQuadraEntityAndDiaSemana(tipoQuadraMapper.fromModel(tipo), diaSemana)
                 .map(mapper::toModel);
     }
 
