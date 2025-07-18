@@ -1,7 +1,6 @@
 package br.com.mubook.mubook.service;
 
 import br.com.mubook.mubook.dto.ReservaUpdateDto;
-import br.com.mubook.mubook.entity.HistoricoReservasEntity;
 import br.com.mubook.mubook.model.Convidado;
 import br.com.mubook.mubook.model.Reserva;
 import org.springframework.data.domain.Page;
@@ -14,6 +13,8 @@ public interface HistoricoReservasService extends GenericService<Reserva, Long> 
 
     Page<Reserva> findReservasWithFilterPageable(Long idTipoQuadra, LocalDate data, LocalTime hora, int offset, int limit);
 
+    List<Reserva> findReservasWithFilter(Long idTipoQuadra, LocalDate data, LocalTime hora, Long idUsuario);
+
     Reserva agendarReserva(Reserva reserva);
 
     Reserva cancelarReserva(Long id);
@@ -24,7 +25,9 @@ public interface HistoricoReservasService extends GenericService<Reserva, Long> 
 
     Reserva adicionarConvidados(Long reservaId, List<Convidado> convidadosIds);
 
-    Reserva removerConvidados(Long reservaId, List<Long> convidadosIds);
-
     long contarReservasUltimos30Dias();
+
+    void removerConvidados(List<Long> convidadosIds);
+
+    void removerConvidado(Long id);
 }

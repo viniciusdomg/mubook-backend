@@ -69,4 +69,35 @@ public class ReservaSpecifications {
             return cb.and(predicates.toArray(new Predicate[0]));
         };
     }
+
+    public static Specification<HistoricoReservasEntity> comFiltrosHistoricoByUsuario(Long idTipoQuadra, LocalDate data, LocalTime hora, StatusReserva status, Long idUsuario) {
+        return (root, query, cb) -> {
+            List<Predicate> predicates = new ArrayList<>();
+
+            if (idTipoQuadra != null && idTipoQuadra > 0) {
+                predicates.add(cb.equal(root.get("quadra").get("tipoQuadra").get("id"), idTipoQuadra));
+            }
+
+            LocalDate filtroData = (data != null) ? data : LocalDate.now();
+
+            predicates.add(cb.between(
+                    root.get("dataHora"),
+                    LocalDateTime.of(filtroData, LocalTime.MIN),
+                    LocalDateTime.of(filtroData, LocalTime.MAX)
+            ));
+
+            if (hora != null) {
+                LocalDateTime inicio = LocalDateTime.of(filtroData, hora);
+                LocalDateTime fim = inicio.plusMinutes(59);
+                predicates.add(cb.between(root.get("dataHora"), inicio, fim));
+            }
+
+            predicates.add(cb.equal(root.get("status"), status));
+
+            predicates.add(cb.equal(root.get("usuario").get("id"), idUsuario));
+
+
+            return cb.and(predicates.toArray(new Predicate[0]));
+        };
+    }
 }
