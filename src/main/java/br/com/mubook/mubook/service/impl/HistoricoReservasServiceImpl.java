@@ -7,7 +7,9 @@ import br.com.mubook.mubook.enums.StatusReserva;
 import br.com.mubook.mubook.exception.BussinesException;
 import br.com.mubook.mubook.jparepository.*;
 import br.com.mubook.mubook.jparepository.specifications.ReservaSpecifications;
+import br.com.mubook.mubook.mapper.ConvidadoEntityMapper;
 import br.com.mubook.mubook.mapper.HistoricoReservaEntityMapper;
+import br.com.mubook.mubook.model.Convidado;
 import br.com.mubook.mubook.model.Reserva;
 import br.com.mubook.mubook.service.HistoricoReservasService;
 import br.com.mubook.mubook.utils.PageUtils;
@@ -19,7 +21,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -45,10 +49,12 @@ public class HistoricoReservasServiceImpl extends GenericServiceImpl<Reserva, Lo
 
     private final HistoricoReservaEntityMapper mapper;
 
+    private final ConvidadoEntityMapper convidadoMapper;
+
     public HistoricoReservasServiceImpl(HistoricoReservasJpaRepository repository, HistoricoReservaEntityMapper mapper,
                                      QuadraJpaRepository quadraRepository, ConvidadoJpaRepository convidadoRepository,
                                      UsuarioJpaRepository usuarioRepository, PessoaJpaRepository pessoaRepository,
-                                     ReservasDisponiveisJpaRepository disponiveisRepository) {
+                                     ReservasDisponiveisJpaRepository disponiveisRepository, ConvidadoEntityMapper convidadoMapper) {
         super(repository, mapper);
         this.repository = repository;
         this.mapper = mapper;
@@ -57,6 +63,7 @@ public class HistoricoReservasServiceImpl extends GenericServiceImpl<Reserva, Lo
         this.usuarioRepository = usuarioRepository;
         this.pessoaRepository = pessoaRepository;
         this.disponiveisRepository = disponiveisRepository;
+        this.convidadoMapper = convidadoMapper;
     }
 
 
@@ -95,6 +102,10 @@ public class HistoricoReservasServiceImpl extends GenericServiceImpl<Reserva, Lo
     @Override
     public Reserva cancelarReserva(Long id) {
         Reserva reserva = this.findById(id);
+        validateCancelar(reserva);
+        HistoricoReservasEntity entity = mapper.fromModel(reserva);
+        disponiveisRepository.alteraStatusReserva(entity.getDataHora(), entity.getQuadra().getId(),
+                StatusReserva.DISPONIVEL);
         reserva.cancelar();
         return this.save(reserva);
     }
@@ -137,21 +148,36 @@ public class HistoricoReservasServiceImpl extends GenericServiceImpl<Reserva, Lo
 
     @Override
     @Transactional
-    public Reserva adicionarConvidados(Long reservaId, List<Long> convidadosIds) {
+    public Reserva adicionarConvidados(Long reservaId, List<Convidado> convidados) {
         HistoricoReservasEntity reserva = repository.findById(reservaId)
                 .orElseThrow(() -> new EntityNotFoundException("Reserva não encontrada com o ID: " + reservaId));
 
-        List<ConvidadoEntity> novosConvidados = convidadoRepository.findAllById(convidadosIds);
+        if (reserva.getConvidados() == null) {
+            reserva.setConvidados(new ArrayList<>());
+        }
 
-        novosConvidados.forEach(convidado -> {
-            if (!reserva.getConvidados().contains(convidado)) {
+        List<String> cpfsExistentes = reserva.getConvidados().stream()
+                .map(c -> c.getPessoa().getCpf())
+                .toList();
+
+        List<ConvidadoEntity> novosConvidados = convidadoMapper.fromModel(convidados);
+
+        for (ConvidadoEntity convidado : novosConvidados) {
+            PessoaEntity pessoa = pessoaRepository.findByCpf(convidado.getPessoa().getCpf());
+            if (pessoa != null) {
+                convidado.setPessoa(pessoa);
+            }
+
+            if (!cpfsExistentes.contains(convidado.getPessoa().getCpf())) {
+                convidado.setReserva(reserva);
                 reserva.getConvidados().add(convidado);
             }
-        });
+        }
 
         repository.save(reserva);
         return mapper.toModel(reserva);
     }
+
 
     @Override
     @Transactional
@@ -174,6 +200,18 @@ public class HistoricoReservasServiceImpl extends GenericServiceImpl<Reserva, Lo
                     throw new BussinesException("Desculpe, não é possível fazer sua reserva pois ainda há uma vigente");
                 }
             }
+        }
+    }
+
+    private void validateCancelar(Reserva reserva){
+        if(reserva == null){
+            throw new BussinesException("Erro ao encontrar reserva");
+        }
+        if (reserva.getDataHora().isBefore(LocalDateTime.now())) {
+            throw new BussinesException("A reserva não pode mais ser cancelada. O horário já passou.");
+        }
+        if (reserva.getStatus() != StatusReserva.CONFIRMADA) {
+            throw new BussinesException("Apenas reservas confirmadas podem ser canceladas.");
         }
     }
 }

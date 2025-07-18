@@ -1,5 +1,6 @@
 package br.com.mubook.mubook.helper;
 
+import br.com.mubook.mubook.dto.ConvidadoRequest;
 import br.com.mubook.mubook.dto.PageResponse;
 import br.com.mubook.mubook.dto.ReservaCreateDto;
 import br.com.mubook.mubook.enums.StatusReserva;
@@ -9,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class HistoricoReservaHelper {
@@ -40,6 +42,21 @@ public class HistoricoReservaHelper {
     public PageResponse<Reserva> PageToPageResponse(Page<Reserva> page){
         return new PageResponse<>(page.getContent(), page.getTotalElements(), page.getTotalPages(), page.getSize(),
                 page.getNumber(), page.isFirst(), page.isLast(), page.isEmpty());
+    }
+
+    public List<Convidado> RequestToConvidados(List<ConvidadoRequest> requests){
+        return requests.stream()
+                .map(req -> {
+                    Pessoa pessoa = new Pessoa();
+                    pessoa.setEmail(req.email());
+                    pessoa.setNome(req.nome());
+                    pessoa.setCpf(req.cpf());
+
+                    Convidado convidado = new Convidado();
+                    convidado.setPessoa(pessoa);
+                    return convidado;
+                })
+                .collect(Collectors.toList());
     }
 
     private void validate(Quadra quadra, Usuario usuario){

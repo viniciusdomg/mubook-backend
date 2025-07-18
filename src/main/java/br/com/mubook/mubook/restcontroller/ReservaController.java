@@ -1,11 +1,9 @@
 package br.com.mubook.mubook.restcontroller;
 
-import br.com.mubook.mubook.dto.PageResponse;
-import br.com.mubook.mubook.dto.ReservaConvidadoDto;
-import br.com.mubook.mubook.dto.ReservaCreateDto;
-import br.com.mubook.mubook.dto.ReservaUpdateDto;
+import br.com.mubook.mubook.dto.*;
 import br.com.mubook.mubook.exception.BussinesException;
 import br.com.mubook.mubook.helper.HistoricoReservaHelper;
+import br.com.mubook.mubook.model.Convidado;
 import br.com.mubook.mubook.model.Quadra;
 import br.com.mubook.mubook.model.Reserva;
 import br.com.mubook.mubook.model.Usuario;
@@ -106,8 +104,12 @@ public class ReservaController {
 
     @PatchMapping("{id}/cancelar")
     public ResponseEntity<Reserva> cancelar(@PathVariable Long id) {
-        Reserva reservaCancelada = historicoReservasService.cancelarReserva(id);
-        return ResponseEntity.ok(reservaCancelada);
+        try{
+            Reserva reservaCancelada = historicoReservasService.cancelarReserva(id);
+            return ResponseEntity.ok(reservaCancelada);
+        }catch (Exception e){
+            throw new RuntimeException("Erro ao cancelar reserva: "+ e.getMessage());
+        }
     }
 
     @PutMapping("{id}/finalizar")
@@ -123,9 +125,14 @@ public class ReservaController {
     }
 
     @PostMapping("{id}/convidados")
-    public ResponseEntity<Reserva> adicionarConvidados(@PathVariable Long id, @Valid @RequestBody ReservaConvidadoDto dto) {
-        Reserva reservaAtualizada = historicoReservasService.adicionarConvidados(id, dto.getConvidadosIds());
-        return ResponseEntity.ok(reservaAtualizada);
+    public ResponseEntity<Reserva> adicionarConvidados(@PathVariable Long id, @Valid @RequestBody List<ConvidadoRequest> dto) {
+         try {
+             List<Convidado> convidados = historicoHelper.RequestToConvidados(dto);
+             Reserva reservaAtualizada = historicoReservasService.adicionarConvidados(id, convidados);
+             return ResponseEntity.ok(reservaAtualizada);
+         }catch (Exception e){
+             throw new RuntimeException("Erro ao adicionar convidados: "+ e.getMessage());
+         }
     }
 
     @DeleteMapping("{id}/convidados")
