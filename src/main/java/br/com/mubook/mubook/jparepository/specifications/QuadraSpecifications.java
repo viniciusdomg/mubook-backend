@@ -14,10 +14,8 @@ public class QuadraSpecifications {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
 
-            System.out.println("Filtro tipoQuadra = " + tipoQuadra);
 
             if (tipoQuadra != null && tipoQuadra > 0) {
-                System.out.println("Filtro tipoQuadra ADICIONADO = " + tipoQuadra);
 
                 predicates.add(
                         cb.equal(root.get("tipoQuadra").get("id"), tipoQuadra)

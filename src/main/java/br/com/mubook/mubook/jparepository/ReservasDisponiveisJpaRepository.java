@@ -2,6 +2,7 @@ package br.com.mubook.mubook.jparepository;
 
 import br.com.mubook.mubook.entity.QuadraEntity;
 import br.com.mubook.mubook.entity.ReservasDisponiveisEntity;
+import br.com.mubook.mubook.enums.StatusReserva;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -22,5 +23,8 @@ public interface ReservasDisponiveisJpaRepository extends GenericRepository<Rese
 
     List<ReservasDisponiveisEntity> quadra(QuadraEntity quadra);
 
-
+    @Transactional
+    @Modifying
+    @Query("UPDATE ReservasDisponiveisEntity r SET r.status = :status WHERE r.dataHora = :dataHora AND r.quadra.id = :idQuadra")
+    void alteraStatusReserva(LocalDateTime dataHora, Integer idQuadra, StatusReserva status);
 }

@@ -11,4 +11,8 @@ public interface PessoaJpaRepository extends GenericRepository<PessoaEntity, Lon
     @Query("select p " +
             "from PessoaEntity p where p.email = :search")
     PessoaEntity findByEmail(String search);
+
+    @Query("select p from PessoaEntity p where p.cpf = :cpf")
+    PessoaEntity findByCpf(String cpf);
+
 }

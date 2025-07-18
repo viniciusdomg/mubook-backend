@@ -18,14 +18,10 @@ public class Reserva {
     private Usuario usuario;
     private StatusReserva status;
     private Quadra quadra;
-    private List<Pessoa> convidados;
+    private List<Convidado> convidados;
 
     public void cancelar() {
         this.status = StatusReserva.CANCELADA;
     }
 
-    public void remarcar(LocalDateTime novoHorario) {
-        this.dataHora = novoHorario;
-        this.status = StatusReserva.REMARCADA;
-    }
 }

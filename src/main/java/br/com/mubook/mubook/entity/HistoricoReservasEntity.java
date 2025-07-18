@@ -14,7 +14,7 @@ import br.com.mubook.mubook.enums.StatusReserva;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "historico_reservas", schema = "mubook") // Adicionei o schema para consistência
+@Table(name = "historico_reservas", schema = "mubook")
 public class HistoricoReservasEntity {
 
     @Id
@@ -36,12 +36,6 @@ public class HistoricoReservasEntity {
     @JoinColumn(name = "quadra_id", nullable = false)
     private QuadraEntity quadra;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "reserva_convidado",
-            schema = "mubook",
-            joinColumns = @JoinColumn(name = "reserva_id"),
-            inverseJoinColumns = @JoinColumn(name = "convidado_id")
-    )
+    @OneToMany(mappedBy = "reserva", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ConvidadoEntity> convidados;
 }

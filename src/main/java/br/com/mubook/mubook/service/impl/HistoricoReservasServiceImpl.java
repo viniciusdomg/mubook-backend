@@ -1,23 +1,27 @@
 package br.com.mubook.mubook.service.impl;
 
-import br.com.mubook.mubook.dto.ReservaCreateDto;
 import br.com.mubook.mubook.dto.ReservaUpdateDto;
-import br.com.mubook.mubook.entity.ConvidadoEntity;
-import br.com.mubook.mubook.entity.QuadraEntity;
-import br.com.mubook.mubook.entity.HistoricoReservasEntity;
-import br.com.mubook.mubook.entity.UsuarioEntity;
+import br.com.mubook.mubook.entity.*;
+import br.com.mubook.mubook.enums.RoleUser;
 import br.com.mubook.mubook.enums.StatusReserva;
+import br.com.mubook.mubook.exception.BussinesException;
 import br.com.mubook.mubook.jparepository.*;
+import br.com.mubook.mubook.jparepository.specifications.ReservaSpecifications;
 import br.com.mubook.mubook.mapper.HistoricoReservaEntityMapper;
 import br.com.mubook.mubook.model.Reserva;
 import br.com.mubook.mubook.service.HistoricoReservasService;
+import br.com.mubook.mubook.utils.PageUtils;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Implementação da camada de serviço para Reserva.
@@ -28,81 +32,73 @@ import java.util.List;
 public class HistoricoReservasServiceImpl extends GenericServiceImpl<Reserva, Long, HistoricoReservasEntity> implements HistoricoReservasService {
 
     private final HistoricoReservasJpaRepository repository;
-    private final HistoricoReservaEntityMapper mapper;
-    private final UsuarioJpaRepository usuarioRepository;
+
     private final QuadraJpaRepository quadraRepository;
+
+    private final UsuarioJpaRepository usuarioRepository;
+
     private final ConvidadoJpaRepository convidadoRepository;
 
+    private final PessoaJpaRepository pessoaRepository;
+
+    private final ReservasDisponiveisJpaRepository disponiveisRepository;
+
+    private final HistoricoReservaEntityMapper mapper;
+
     public HistoricoReservasServiceImpl(HistoricoReservasJpaRepository repository, HistoricoReservaEntityMapper mapper,
-                                        UsuarioJpaRepository usuarioRepository, QuadraJpaRepository quadraRepository,
-                                        ConvidadoJpaRepository convidadoRepository) {
+                                     QuadraJpaRepository quadraRepository, ConvidadoJpaRepository convidadoRepository,
+                                     UsuarioJpaRepository usuarioRepository, PessoaJpaRepository pessoaRepository,
+                                     ReservasDisponiveisJpaRepository disponiveisRepository) {
         super(repository, mapper);
         this.repository = repository;
         this.mapper = mapper;
-        this.usuarioRepository = usuarioRepository;
         this.quadraRepository = quadraRepository;
         this.convidadoRepository = convidadoRepository;
+        this.usuarioRepository = usuarioRepository;
+        this.pessoaRepository = pessoaRepository;
+        this.disponiveisRepository = disponiveisRepository;
+    }
+
+
+    @Override
+    public Page<Reserva> findReservasWithFilterPageable(Long idTipoQuadra, LocalDate data, LocalTime hora, int offset, int limit) {
+        Pageable pageable = PageRequest.of(offset, limit);
+        Page<HistoricoReservasEntity> entities = repository.findAll(ReservaSpecifications.
+                comFiltrosHistorico(idTipoQuadra, data, hora, StatusReserva.CONFIRMADA), pageable);
+
+        List<Reserva> reservas = mapper.toModel(entities.getContent());
+        return PageUtils.mapPage(entities, reservas);
     }
 
     @Override
     @Transactional
-    public Reserva criarReserva(ReservaCreateDto dto) {
-        // 1. Buscar as entidades relacionadas pelos IDs
-        UsuarioEntity usuario = usuarioRepository.findById(dto.getUsuarioId())
-                .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado com o ID: " + dto.getUsuarioId()));
-
-        QuadraEntity quadra = quadraRepository.findById(dto.getQuadraId())
-                .orElseThrow(() -> new EntityNotFoundException("Quadra não encontrada com o ID: " + dto.getQuadraId()));
-
-        List<ConvidadoEntity> convidados = new ArrayList<>();
-        if (dto.getConvidadosIds() != null && !dto.getConvidadosIds().isEmpty()) {
-            convidados = convidadoRepository.findAllById(dto.getConvidadosIds());
+    public Reserva agendarReserva(Reserva reserva) {
+        validate(reserva);
+        HistoricoReservasEntity entity = mapper.fromModel(reserva);
+        for(ConvidadoEntity convidado : entity.getConvidados()){
+            PessoaEntity pessoa = pessoaRepository.findByCpf(convidado.getPessoa().getCpf());
+            if(pessoa != null){
+                convidado.setPessoa(pessoa);
+            }
+            convidado.setReserva(entity);
         }
 
-        // 2. Criar e preencher a nova ReservaEntity
-        HistoricoReservasEntity novaReserva = new HistoricoReservasEntity();
-        novaReserva.setDataHora(dto.getDataHora());
-        novaReserva.setUsuario(usuario);
-        novaReserva.setQuadra(quadra);
-        novaReserva.setConvidados(convidados);
-        novaReserva.setStatus(StatusReserva.CONFIRMADA); // Status inicial padrão
+        Reserva reservaSalva = mapper.toModel(repository.save(entity));
 
-        // 3. Salvar no banco e mapear para o modelo de retorno
-        HistoricoReservasEntity reservaSalva = repository.save(novaReserva);
-        return mapper.toModel(reservaSalva);
+        disponiveisRepository.alteraStatusReserva(reservaSalva.getDataHora(),
+                reservaSalva.getQuadra().getId(), StatusReserva.AGENDADO);
+
+        return reservaSalva;
     }
 
 
-    /**
-     * Implementação da lógica para cancelar uma reserva.
-     */
     @Override
     public Reserva cancelarReserva(Long id) {
-        // Busca a reserva pelo ID. O método findById do GenericServiceImpl já lança
-        // exceção se não encontrar.
         Reserva reserva = this.findById(id);
-
-        // Usa o método do próprio modelo para alterar o status
         reserva.cancelar();
-
-        // Salva a alteração no banco de dados
         return this.save(reserva);
     }
 
-    /**
-     * Implementação da lógica para remarcar uma reserva.
-     */
-    @Override
-    public Reserva remarcarReserva(Long id, LocalDateTime novoHorario) {
-        // Busca a reserva pelo ID.
-        Reserva reserva = this.findById(id);
-
-        // Usa o método do modelo para alterar a data e o status
-        reserva.remarcar(novoHorario);
-
-        // Salva a alteração no banco de dados
-        return this.save(reserva);
-    }
 
     @Override
     @Transactional
@@ -110,7 +106,6 @@ public class HistoricoReservasServiceImpl extends GenericServiceImpl<Reserva, Lo
         HistoricoReservasEntity reserva = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Reserva não encontrada com o ID: " + id));
 
-        // Regra de negócio: só podemos finalizar uma reserva que está confirmada.
         if (reserva.getStatus() != StatusReserva.CONFIRMADA) {
             throw new IllegalStateException("Apenas reservas confirmadas podem ser finalizadas.");
         }
@@ -126,12 +121,10 @@ public class HistoricoReservasServiceImpl extends GenericServiceImpl<Reserva, Lo
         HistoricoReservasEntity reserva = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Reserva não encontrada com o ID: " + id));
 
-        // Atualiza a data/hora se ela for fornecida no DTO
         if (dto.getDataHora() != null) {
             reserva.setDataHora(dto.getDataHora());
         }
 
-        // Atualiza a quadra se o ID for fornecido no DTO
         if (dto.getQuadraId() != null) {
             QuadraEntity novaQuadra = quadraRepository.findById(dto.getQuadraId())
                     .orElseThrow(() -> new EntityNotFoundException("Quadra não encontrada com o ID: " + dto.getQuadraId()));
@@ -150,7 +143,6 @@ public class HistoricoReservasServiceImpl extends GenericServiceImpl<Reserva, Lo
 
         List<ConvidadoEntity> novosConvidados = convidadoRepository.findAllById(convidadosIds);
 
-        // Evita adicionar convidados duplicados
         novosConvidados.forEach(convidado -> {
             if (!reserva.getConvidados().contains(convidado)) {
                 reserva.getConvidados().add(convidado);
@@ -172,5 +164,16 @@ public class HistoricoReservasServiceImpl extends GenericServiceImpl<Reserva, Lo
 
         repository.save(reserva);
         return mapper.toModel(reserva);
+    }
+
+    private void validate(Reserva reserva){
+        if(repository.existsByUsuarioIdAndStatus(reserva.getUsuario().getId(), StatusReserva.CONFIRMADA)){
+            Optional<UsuarioEntity> entity = usuarioRepository.findById(reserva.getId());
+            if(entity.isPresent()){
+                if (entity.get().getRoleUser() == RoleUser.ROLE_ASSOCIADO){
+                    throw new BussinesException("Desculpe, não é possível fazer sua reserva pois ainda há uma vigente");
+                }
+            }
+        }
     }
 }

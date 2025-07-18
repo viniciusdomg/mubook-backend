@@ -12,6 +12,6 @@ import org.mapstruct.Mapper;
  * campos aninhados.
  */
 @Mapper(componentModel = "spring", uses = { UsuarioEntityMapper.class, QuadraEntityMapper.class,
-        PessoaEntityMapper.class })
+        PessoaEntityMapper.class, ConvidadoEntityMapper.class })
 public interface HistoricoReservaEntityMapper extends GenericEntityMapper<Reserva, HistoricoReservasEntity> {
 }
