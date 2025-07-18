@@ -19,9 +19,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.net.URI;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
@@ -93,10 +91,8 @@ public class ReservaController {
             Reserva historico = historicoHelper.RequestToModel(reservaDto, quadra, usuarioOpt.get());
 
             Reserva novaReserva = historicoReservasService.agendarReserva(historico);
-            URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
-                    .buildAndExpand(novaReserva.getId()).toUri();
 
-            return ResponseEntity.created(uri).body(novaReserva);
+            return ResponseEntity.ok().body(novaReserva);
         }catch (Exception e){
             throw new RuntimeException("Erro ao agendar reserva: "+ e.getMessage());
         }
@@ -112,18 +108,6 @@ public class ReservaController {
         }
     }
 
-    @PutMapping("{id}/finalizar")
-    public ResponseEntity<Reserva> finalizar(@PathVariable Long id) {
-        Reserva reservaFinalizada = historicoReservasService.finalizarReserva(id);
-        return ResponseEntity.ok(reservaFinalizada);
-    }
-
-    @PutMapping("{id}")
-    public ResponseEntity<Reserva> editar(@PathVariable Long id, @Valid @RequestBody ReservaUpdateDto reservaDto) {
-        Reserva reservaEditada = historicoReservasService.editarReserva(id, reservaDto);
-        return ResponseEntity.ok(reservaEditada);
-    }
-
     @PostMapping("{id}/convidados")
     public ResponseEntity<Reserva> adicionarConvidados(@PathVariable Long id, @Valid @RequestBody List<ConvidadoRequest> dto) {
          try {
@@ -136,9 +120,15 @@ public class ReservaController {
     }
 
     @DeleteMapping("{id}/convidados")
-    public ResponseEntity<Reserva> removerConvidados(@PathVariable Long id, @Valid @RequestBody ReservaConvidadoDto dto) {
-        Reserva reservaAtualizada = historicoReservasService.removerConvidados(id, dto.getConvidadosIds());
-        return ResponseEntity.ok(reservaAtualizada);
+    public ResponseEntity<String> removerConvidado(@PathVariable Long id) {
+        historicoReservasService.removerConvidado(id);
+        return ResponseEntity.ok("Convidado deletado com sucesso");
+    }
+
+    @DeleteMapping("convidados/all")
+    public ResponseEntity<String> removerConvidados(@RequestBody ReservaConvidadoDto dto) {
+        historicoReservasService.removerConvidados(dto.getConvidadosIds());
+        return ResponseEntity.ok("Convidados deletados com sucesso");
     }
 
 }

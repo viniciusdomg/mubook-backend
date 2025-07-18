@@ -23,5 +23,7 @@ public interface HistoricoReservasService extends GenericService<Reserva, Long> 
 
     Reserva adicionarConvidados(Long reservaId, List<Convidado> convidadosIds);
 
-    Reserva removerConvidados(Long reservaId, List<Long> convidadosIds);
+    void removerConvidados(List<Long> convidadosIds);
+
+    void removerConvidado(Long id);
 }

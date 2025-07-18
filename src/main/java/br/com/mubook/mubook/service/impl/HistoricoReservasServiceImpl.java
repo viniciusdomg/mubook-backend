@@ -149,6 +149,8 @@ public class HistoricoReservasServiceImpl extends GenericServiceImpl<Reserva, Lo
     @Override
     @Transactional
     public Reserva adicionarConvidados(Long reservaId, List<Convidado> convidados) {
+        validatePessoa(convidados);
+
         HistoricoReservasEntity reserva = repository.findById(reservaId)
                 .orElseThrow(() -> new EntityNotFoundException("Reserva não encontrada com o ID: " + reservaId));
 
@@ -178,23 +180,21 @@ public class HistoricoReservasServiceImpl extends GenericServiceImpl<Reserva, Lo
         return mapper.toModel(reserva);
     }
 
+    @Override
+    @Transactional
+    public void removerConvidados(List<Long> convidadosIds) {
+        convidadoRepository.deleteAllById(convidadosIds);
+    }
 
     @Override
     @Transactional
-    public Reserva removerConvidados(Long reservaId, List<Long> convidadosIds) {
-        HistoricoReservasEntity reserva = repository.findById(reservaId)
-                .orElseThrow(() -> new EntityNotFoundException("Reserva não encontrada com o ID: " + reservaId));
-
-        List<ConvidadoEntity> convidadosParaRemover = convidadoRepository.findAllById(convidadosIds);
-        reserva.getConvidados().removeAll(convidadosParaRemover);
-
-        repository.save(reserva);
-        return mapper.toModel(reserva);
+    public void removerConvidado(Long id) {
+        convidadoRepository.deleteById(id);
     }
 
     private void validate(Reserva reserva){
         if(repository.existsByUsuarioIdAndStatus(reserva.getUsuario().getId(), StatusReserva.CONFIRMADA)){
-            Optional<UsuarioEntity> entity = usuarioRepository.findById(reserva.getId());
+            Optional<UsuarioEntity> entity = usuarioRepository.findById(reserva.getUsuario().getId());
             if(entity.isPresent()){
                 if (entity.get().getRoleUser() == RoleUser.ROLE_ASSOCIADO){
                     throw new BussinesException("Desculpe, não é possível fazer sua reserva pois ainda há uma vigente");
@@ -212,6 +212,26 @@ public class HistoricoReservasServiceImpl extends GenericServiceImpl<Reserva, Lo
         }
         if (reserva.getStatus() != StatusReserva.CONFIRMADA) {
             throw new BussinesException("Apenas reservas confirmadas podem ser canceladas.");
+        }
+    }
+
+    private void validatePessoa(List<Convidado> convidados){
+        for (Convidado convidado : convidados) {
+            String cpf = convidado.getPessoa().getCpf();
+            String email = convidado.getPessoa().getEmail();
+            String nome = convidado.getPessoa().getNome();
+
+            if (cpf == null || !cpf.matches("\\d{11}")) {
+                throw new BussinesException("CPF "+ cpf +" inválido: deve conter exatamente 11 dígitos");
+            }
+
+            if (email == null || !email.matches("^[\\w\\.-]+@[\\w\\.-]+\\.\\w{2,}$")) {
+                throw new IllegalArgumentException("E-mail inválido: " + email);
+            }
+
+            if (nome == null || nome.trim().isEmpty()) {
+                throw new IllegalArgumentException("Nome não pode estar vazio.");
+            }
         }
     }
 }
