@@ -1,6 +1,7 @@
 package br.com.mubook.mubook.restcontroller;
 
 import br.com.mubook.mubook.dto.*;
+import br.com.mubook.mubook.entity.HistoricoReservasEntity;
 import br.com.mubook.mubook.exception.BussinesException;
 import br.com.mubook.mubook.helper.HistoricoReservaHelper;
 import br.com.mubook.mubook.model.Convidado;
@@ -141,4 +142,8 @@ public class ReservaController {
         return ResponseEntity.ok(reservaAtualizada);
     }
 
+    @GetMapping("/count/historico-reserva/mes")
+    public long getContagemReservasUltimos30Dias() {
+        return historicoReservasService.contarReservasUltimos30Dias();
+    }
 }

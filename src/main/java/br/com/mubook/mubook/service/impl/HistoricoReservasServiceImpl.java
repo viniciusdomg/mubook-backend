@@ -51,10 +51,12 @@ public class HistoricoReservasServiceImpl extends GenericServiceImpl<Reserva, Lo
 
     private final ConvidadoEntityMapper convidadoMapper;
 
+    private final HistoricoReservasJpaRepository historicoReservasJpaRepository;
+
     public HistoricoReservasServiceImpl(HistoricoReservasJpaRepository repository, HistoricoReservaEntityMapper mapper,
                                      QuadraJpaRepository quadraRepository, ConvidadoJpaRepository convidadoRepository,
                                      UsuarioJpaRepository usuarioRepository, PessoaJpaRepository pessoaRepository,
-                                     ReservasDisponiveisJpaRepository disponiveisRepository, ConvidadoEntityMapper convidadoMapper) {
+                                     ReservasDisponiveisJpaRepository disponiveisRepository, ConvidadoEntityMapper convidadoMapper, HistoricoReservasJpaRepository historicoReservasJpaRepository) {
         super(repository, mapper);
         this.repository = repository;
         this.mapper = mapper;
@@ -64,6 +66,7 @@ public class HistoricoReservasServiceImpl extends GenericServiceImpl<Reserva, Lo
         this.pessoaRepository = pessoaRepository;
         this.disponiveisRepository = disponiveisRepository;
         this.convidadoMapper = convidadoMapper;
+        this.historicoReservasJpaRepository = historicoReservasJpaRepository;
     }
 
 
@@ -201,6 +204,11 @@ public class HistoricoReservasServiceImpl extends GenericServiceImpl<Reserva, Lo
                 }
             }
         }
+    }
+
+    public long contarReservasUltimos30Dias() {
+        LocalDateTime trintaDiasAtras = LocalDateTime.now().minusDays(30);
+        return historicoReservasJpaRepository.countReservasUltimos30Dias(trintaDiasAtras);
     }
 
     private void validateCancelar(Reserva reserva){

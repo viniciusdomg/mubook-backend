@@ -1,6 +1,7 @@
 package br.com.mubook.mubook.service;
 
 import br.com.mubook.mubook.dto.ReservaUpdateDto;
+import br.com.mubook.mubook.entity.HistoricoReservasEntity;
 import br.com.mubook.mubook.model.Convidado;
 import br.com.mubook.mubook.model.Reserva;
 import org.springframework.data.domain.Page;
@@ -24,4 +25,6 @@ public interface HistoricoReservasService extends GenericService<Reserva, Long> 
     Reserva adicionarConvidados(Long reservaId, List<Convidado> convidadosIds);
 
     Reserva removerConvidados(Long reservaId, List<Long> convidadosIds);
+
+    long contarReservasUltimos30Dias();
 }
