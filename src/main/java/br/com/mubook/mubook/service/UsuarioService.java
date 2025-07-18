@@ -17,4 +17,8 @@ public interface UsuarioService extends GenericService<Usuario, Long> {
     Page<Usuario> findAllWithFilters(FiltrosUsuarioRequest filtros, int offset, int limit);
 
     Usuario findByPessoaId(Long id);
+    void gerarTokenDeResetDeSenha(String cpf);
+    void trocarSenha(String token, String novaSenha);
+    public Long contarSocios();
+    public Long contarAdministradores();
 }

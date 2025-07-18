@@ -1,11 +1,14 @@
 package br.com.mubook.mubook.service.impl;
 
 import br.com.mubook.mubook.dto.FiltrosUsuarioRequest;
+import br.com.mubook.mubook.entity.PasswordResetTokenEntity;
 import br.com.mubook.mubook.entity.UsuarioEntity;
+import br.com.mubook.mubook.jparepository.PasswordResetTokenRepository;
 import br.com.mubook.mubook.jparepository.UsuarioJpaRepository;
 import br.com.mubook.mubook.jparepository.specifications.UsuarioSpecifications;
 import br.com.mubook.mubook.mapper.UsuarioEntityMapper;
 import br.com.mubook.mubook.model.Usuario;
+import br.com.mubook.mubook.service.EmailService;
 import br.com.mubook.mubook.service.PessoaService;
 import br.com.mubook.mubook.service.UsuarioService;
 import br.com.mubook.mubook.utils.PageUtils;
@@ -19,24 +22,26 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class UsuarioServiceImpl extends GenericServiceImpl<Usuario, Long, UsuarioEntity> implements UsuarioService {
 
     private final UsuarioJpaRepository repository;
-
+    private final PasswordResetTokenRepository tokenRepository; // 1. Injetar novo repo
     private final UsuarioEntityMapper mapper;
-
     private final PessoaService pessoaService;
-
     private final PasswordEncoder passwordEncoder;
+    private final EmailService emailService;
 
-    public UsuarioServiceImpl(UsuarioJpaRepository repository, UsuarioEntityMapper mapper, PessoaService pessoaService, PasswordEncoder passwordEncoder) {
+    public UsuarioServiceImpl(UsuarioJpaRepository repository, PasswordResetTokenRepository tokenRepository, UsuarioEntityMapper mapper, PessoaService pessoaService, PasswordEncoder passwordEncoder, EmailService emailService) {
         super(repository, mapper);
         this.repository = repository;
+        this.tokenRepository = tokenRepository;
         this.mapper = mapper;
         this.pessoaService = pessoaService;
         this.passwordEncoder = passwordEncoder;
+        this.emailService = emailService;
     }
 
     @Transactional(readOnly = true)
@@ -79,6 +84,47 @@ public class UsuarioServiceImpl extends GenericServiceImpl<Usuario, Long, Usuari
         UsuarioEntity entity = mapper.fromModel(model);
         UsuarioEntity savedEntity = repository.save(entity);
         return mapper.toModel(savedEntity);
+    }
+
+    @Override
+    @Transactional
+    public void gerarTokenDeResetDeSenha(String cpf) {
+        UsuarioEntity usuarioEntity = repository.findByEmailOrCpf(cpf)
+                .orElseThrow(() -> new BadCredentialsException("Usuário não encontrado com o CPF informado."));
+
+        String tokenString = UUID.randomUUID().toString();
+        PasswordResetTokenEntity tokenEntity = new PasswordResetTokenEntity(tokenString, usuarioEntity);
+
+        tokenRepository.save(tokenEntity);
+
+        emailService.enviarEmailRecuperacaoSenha(usuarioEntity.getPessoa().getEmail(), tokenString);
+    }
+
+    @Override
+    @Transactional
+    public void trocarSenha(String token, String novaSenha) {
+        PasswordResetTokenEntity tokenEntity = tokenRepository.findByToken(token)
+                .orElseThrow(() -> new BadCredentialsException("Token inválido ou não encontrado."));
+
+        if (tokenEntity.isExpired()) {
+            tokenRepository.delete(tokenEntity); // Remove o token expirado
+            throw new BadCredentialsException("Token expirado.");
+        }
+
+        UsuarioEntity usuario = tokenEntity.getUsuario();
+        usuario.setSenha(passwordEncoder.encode(novaSenha));
+        repository.save(usuario);
+
+        // Importante: Invalida o token após o uso bem-sucedido
+        tokenRepository.delete(tokenEntity);
+    }
+
+    public Long contarAdministradores() {
+        return repository.countByRoleAdministrador();
+    }
+
+    public Long contarSocios() {
+        return repository.countByRoleSocio();
     }
 
     @Override

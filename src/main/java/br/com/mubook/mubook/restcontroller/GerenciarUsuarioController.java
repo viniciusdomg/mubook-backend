@@ -94,4 +94,26 @@ public class GerenciarUsuarioController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+    @GetMapping("count/administradores")
+    @PreAuthorize("hasAuthority('ROLE_ADMINISTRADOR')")
+    public ResponseEntity<Long> contarAdministradores() {
+        try {
+            long count = usuarioService.contarAdministradores();
+            return ResponseEntity.ok(count);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro ao contar administradores.");
+        }
+    }
+
+    @GetMapping("count/socios")
+    @PreAuthorize("hasAuthority('ROLE_ADMINISTRADOR')")
+    public ResponseEntity<Long> contarSocios() {
+        try {
+            long count = usuarioService.contarSocios();
+            return ResponseEntity.ok(count);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro ao contar sócios.");
+        }
+    }
 }

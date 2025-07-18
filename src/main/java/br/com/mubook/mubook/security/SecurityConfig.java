@@ -44,6 +44,12 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
+
+                        // ✨ LINHAS ADICIONADAS AQUI ✨
+                        // Libera os endpoints de "esqueci a senha" e "trocar senha"
+                        .requestMatchers(HttpMethod.POST, "/api/password/esqueci-senha").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/password/trocar-senha").permitAll()
+
                         .requestMatchers("/uploads/**").permitAll()
                         .anyRequest().authenticated()
                 )

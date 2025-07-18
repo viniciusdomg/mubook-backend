@@ -7,6 +7,7 @@ import br.com.mubook.mubook.helper.UsuarioHelper;
 import br.com.mubook.mubook.model.Usuario;
 import br.com.mubook.mubook.security.JwtService;
 import br.com.mubook.mubook.security.UsuarioDetailsService;
+import br.com.mubook.mubook.service.EmailService;
 import br.com.mubook.mubook.service.UsuarioService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,7 @@ public class AuthenticationController {
     private final UsuarioService usuarioService;
 
     private final UsuarioHelper helper;
+    private final EmailService emailService;
 
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request) {
@@ -47,10 +49,15 @@ public class AuthenticationController {
     public ResponseEntity<String> registerAdmin(@Valid @RequestBody CriarAtualizarUsuarioRequest request) {
         try {
             Usuario usuario = helper.RegisterRequestToUsuario(request.nome(), request.cpf(), request.email(), request.senha(), request.tipo());
-            usuarioService.save(usuario);
+            usuarioService.save(usuario); // Salva o usuário no banco
 
-            return ResponseEntity.ok("Conta cadastrada com sucesso!");
-        }catch (BadCredentialsException e){
+            // 3. Chame o serviço de e-mail APÓS o usuário ser salvo com sucesso
+            // Passamos a senha do 'request', pois a senha no objeto 'usuario' provavelmente estará criptografada.
+            emailService.enviarEmailDeCredenciais(request.email(), request.cpf(), request.senha());
+
+            return ResponseEntity.ok("Conta cadastrada com sucesso! Verifique seu e-mail para as credenciais de acesso.");
+
+        } catch (BadCredentialsException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
