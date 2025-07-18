@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS mubook.reserva_convidado (
                                                         PRIMARY KEY (reserva_id, convidado_id),
 
     -- Referências às tabelas originais
-    CONSTRAINT fk_reserva FOREIGN KEY (reserva_id) REFERENCES mubook.reserva(id) ON DELETE CASCADE,
+    CONSTRAINT fk_reserva FOREIGN KEY (reserva_id) REFERENCES mubook.historico_reservas(id) ON DELETE CASCADE,
     CONSTRAINT fk_convidado FOREIGN KEY (convidado_id) REFERENCES mubook.convidado(id) ON DELETE CASCADE
     );
 

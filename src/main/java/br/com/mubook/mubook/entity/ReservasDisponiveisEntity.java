@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import br.com.mubook.mubook.enums.StatusReserva;
 
@@ -14,8 +13,8 @@ import br.com.mubook.mubook.enums.StatusReserva;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "reserva", schema = "mubook") // Adicionei o schema para consistência
-public class ReservaEntity {
+@Table(name = "reservas_disponiveis", schema = "mubook")
+public class ReservasDisponiveisEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,10 +22,6 @@ public class ReservaEntity {
 
     @Column(name = "data_hora", nullable = false)
     private LocalDateTime dataHora;
-
-    @ManyToOne
-    @JoinColumn(name = "usuario_id", nullable = false)
-    private UsuarioEntity usuario;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -36,12 +31,4 @@ public class ReservaEntity {
     @JoinColumn(name = "quadra_id", nullable = false)
     private QuadraEntity quadra;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "reserva_convidado",
-            schema = "mubook",
-            joinColumns = @JoinColumn(name = "reserva_id"),
-            inverseJoinColumns = @JoinColumn(name = "convidado_id")
-    )
-    private List<ConvidadoEntity> convidados;
 }

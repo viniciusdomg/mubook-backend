@@ -1,5 +1,5 @@
 -- Criação da tabela reserva dentro do schema 'mubook'
-CREATE TABLE IF NOT EXISTS mubook.reserva (
+CREATE TABLE IF NOT EXISTS mubook.historico_reservas (
                                 id BIGSERIAL PRIMARY KEY,
                                 data_hora TIMESTAMP NOT NULL,
                                 usuario_id BIGINT NOT NULL,

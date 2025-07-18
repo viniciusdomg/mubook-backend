@@ -34,7 +34,6 @@ public class QuadraController {
                                                 @RequestParam(required = false, defaultValue = "0") int offset,
                                                 @RequestParam(required = false, defaultValue = "20") int limit) {
         try {
-            System.out.println("Filtro tipoQuadra CONTROLLER = " + filter);
             Page<Quadra> page = service.findAllByTipoQuadra(filter, offset, limit);
             return ResponseEntity.ok(page);
         }catch (Exception e){
