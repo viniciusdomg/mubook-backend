@@ -25,6 +25,6 @@ public interface UsuarioJpaRepository extends GenericRepository<UsuarioEntity, L
     @Query("select count(u) from UsuarioEntity u where u.roleUser = 'ROLE_ADMINISTRADOR'")
     Long countByRoleAdministrador();
 
-    @Query("select count(u) from UsuarioEntity u where u.roleUser = 'ROLE_SOCIO'")
+    @Query("select count(u) from UsuarioEntity u where u.roleUser = 'ROLE_ASSOCIADO'")
     Long countByRoleSocio();
 }

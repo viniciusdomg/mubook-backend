@@ -10,4 +10,5 @@ public interface QuadraService extends GenericService<Quadra, Integer> {
     void update(Integer id, Quadra dto);
 
     Page<Quadra> findAllByTipoQuadra(Long tipoQuadra, int page, int limit);
+    public long contarQuadras();
 }

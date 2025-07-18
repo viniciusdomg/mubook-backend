@@ -16,7 +16,7 @@ public class TipoQuadraController {
 
     private final TipoQuadraService tipoQuadraService;
 
-    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'ASSOCIADO')")
     @GetMapping
     public ResponseEntity<List<TipoQuadra>> findAll() {
         List<TipoQuadra> lista = tipoQuadraService.findAll();

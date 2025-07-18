@@ -41,6 +41,10 @@ public class QuadraServiceImpl extends GenericServiceImpl<Quadra, Integer, Quadr
         repository.save(quadraEntity);
     }
 
+    public long contarQuadras() {
+        return repository.countTotalQuadras();
+    }
+
     @Override
     public Page<Quadra> findAllByTipoQuadra(Long tipoQuadra, int offset, int limit) {
         Pageable pageable = PageRequest.of(offset, limit);

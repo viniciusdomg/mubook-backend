@@ -26,8 +26,9 @@ public class QuadraController {
     private final TipoQuadraService tipoService;
 
     private final QuadraHelper helper;
+    private final QuadraService quadraService;
 
-    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    @PreAuthorize("hasAnyRole('ADMINISTRADOR', 'ASSOCIADO')")
     @GetMapping
     public ResponseEntity<Page<Quadra>> findAll(@RequestParam(required = false) Long filter,
                                                 @RequestParam(required = false, defaultValue = "0") int offset,
@@ -65,6 +66,17 @@ public class QuadraController {
             return ResponseEntity.ok("Quadra criada com sucesso!");
         }catch (Exception e){
             return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @GetMapping("count/quadras")
+    @PreAuthorize("hasAuthority('ROLE_ADMINISTRADOR')")
+    public ResponseEntity<Long> contarAdministradores() {
+        try {
+            long count = quadraService.contarQuadras();
+            return ResponseEntity.ok(count);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro ao contar quadras.");
         }
     }
 
@@ -116,4 +128,6 @@ public class QuadraController {
         }
         return tipoService.findById(dto.tipoQuadraId());
     }
+
+
 }
