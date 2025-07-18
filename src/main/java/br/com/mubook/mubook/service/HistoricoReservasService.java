@@ -13,6 +13,8 @@ public interface HistoricoReservasService extends GenericService<Reserva, Long> 
 
     Page<Reserva> findReservasWithFilterPageable(Long idTipoQuadra, LocalDate data, LocalTime hora, int offset, int limit);
 
+    List<Reserva> findReservasWithFilter(Long idTipoQuadra, LocalDate data, LocalTime hora, Long idUsuario);
+
     Reserva agendarReserva(Reserva reserva);
 
     Reserva cancelarReserva(Long id);

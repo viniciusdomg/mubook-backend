@@ -78,6 +78,13 @@ public class HistoricoReservasServiceImpl extends GenericServiceImpl<Reserva, Lo
     }
 
     @Override
+    public List<Reserva> findReservasWithFilter(Long idTipoQuadra, LocalDate data, LocalTime hora, Long idUsuario) {
+        List<HistoricoReservasEntity> entities = repository.findAll(ReservaSpecifications.comFiltrosHistorico(idTipoQuadra,
+                data, hora, StatusReserva.CONFIRMADA));
+        return mapper.toModel(entities);
+    }
+
+    @Override
     @Transactional
     public Reserva agendarReserva(Reserva reserva) {
         validate(reserva);

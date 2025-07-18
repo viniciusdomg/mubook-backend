@@ -1,6 +1,7 @@
 package br.com.mubook.mubook.restcontroller;
 
 import br.com.mubook.mubook.dto.*;
+import br.com.mubook.mubook.entity.UsuarioEntity;
 import br.com.mubook.mubook.exception.BussinesException;
 import br.com.mubook.mubook.helper.HistoricoReservaHelper;
 import br.com.mubook.mubook.model.Convidado;
@@ -60,6 +61,27 @@ public class ReservaController {
             Page<Reserva> reservaPage = historicoReservasService.findReservasWithFilterPageable(idTipoQuadra, data, hora, offset, limit);
             PageResponse<Reserva> pageResponse = historicoHelper.PageToPageResponse(reservaPage);
             return ResponseEntity.ok(pageResponse);
+        }catch (Exception e){
+            throw new RuntimeException("Erro ao buscar reservas: "+ e.getMessage());
+        }
+    }
+
+    @GetMapping("historico/associado")
+    @PreAuthorize("hasRole('ASSOCIADO')")
+    public ResponseEntity<List<Reserva>> findAll(
+            @RequestParam(required = false) Long idTipoQuadra, @RequestParam(required = false) LocalDate data,
+            @RequestParam(required = false) LocalTime hora) {
+        try{
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String username = authentication.getName();
+
+            Optional<Usuario> usuarioOpt = usuarioService.findByEmailOrCpf(username);
+            if (usuarioOpt.isEmpty()) {
+                throw new BussinesException("Usuário não encontrado");
+            }
+
+            List<Reserva> reservas = historicoReservasService.findReservasWithFilter(idTipoQuadra, data, hora, usuarioOpt.get().getId());
+            return ResponseEntity.ok(reservas);
         }catch (Exception e){
             throw new RuntimeException("Erro ao buscar reservas: "+ e.getMessage());
         }
